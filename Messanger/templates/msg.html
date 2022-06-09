@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Messanger</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+    <script>
+        var newgroup = {};
+        let userlist = [];
+        let hidelist = [];
+    </script>
+</head>
+
+<body class="g-0 p-0 bg-light" style="
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 19px;
+      height: 100vh;
+      width: 100vw;
+    ">
+    <script>
+        function onlo(chatdata, groupdata, myid) {
+            console.log(chatdata);
+            console.log(groupdata);
+            console.log(myid);
+
+            sio.on("notif", function(e) {
+                console.log("got notif");
+                console.log(e);
+                //get notif userid, chatid,msg upto(10 char)
+                console.log(e["Chatid"]);
+                if (e["Chatid"]) {
+                    if (e["Userid"] === myid) {} else {
+                        //check if fits my msg
+                        console.log("got chatid");
+                        console.log(e["Chatid"]);
+                        //get notif with this id and add one
+                        var c = document.getElementById(e["Chatid"]);
+                        console.log(c);
+                        console.log(c.innerText);
+                        var k = Number(c.innerText + 1);
+                        c.innerText = k;
+                    }
+                }
+                if (e["Groupid"]) {
+                    if (e["Userid"] === myid) {} else {
+                        //check if its my msg
+                        console.log("got group");
+                        console.log(e["Group"]);
+                        //get notif with this id and add one
+                        var c = document.getElementById(e["Group"]);
+                        console.log(c);
+                        console.log(c.innerText);
+                        var k = Number(c.innerText + 1);
+                        c.innerText = k;
+                    }
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        sio = io.connect((namespace = "/minehome"));
+        da = "kenyeeeeee";
+        sio.emit("joinnotif", da);
+        var xz = {
+            Type: "Start",
+        };
+        sio.emit("myfiles", xz);
+        var t = "http://127.0.0.1:8080/ho/";
+        var f;
+        sio.on("connect", function() {
+            console.log("cooooooonected");
+        });
+
+        sio.on("disconnect", function() {
+            console.log("cooooooonected");
+        });
+
+        sio.on("dpchange", function(ddd) {
+            console.log("\n\n\n\n dp changed \n\n\n", ddd);
+            var s = document.getElementById("smydp");
+            var ss = document.getElementById("myposter");
+            console.log(s);
+            s.src = "/static/Images/DP/" + ddd;
+            ss.src = "/static/Images/DP/" + ddd;
+        });
+        sio.on("dppchange", function(da) {
+            console.log("\n\n\n\n dp changed \n\n\n", da);
+            var si = "smydp" + da["Id"];
+            var s = document.getElementById(si);
+            console.log(s);
+            if (s) {
+                s.src = "/static/Images/DP/" + da["DP"];
+            }
+        });
+
+        function createg() {
+            var g = document.getElementById("creatediv");
+            console.log("this is the new g");
+            console.log(g);
+            console.log(g.style.display);
+            let fg = document.getElementById("myhome");
+            let f = document.getElementById("fdiv");
+            let bt = document.getElementById("backbtn");
+
+            if (g.style.display === "block") {
+                //otherv('second')
+                tframe("show");
+                otherv("second");
+                bt.style.display = "block";
+                g.style.display = "block";
+                f.style.display = "none";
+                showp();
+            } else {
+                bt.style.display = "block";
+                tframe("show");
+                otherv("second");
+                f.style.display = "none";
+                g.style.display = "block";
+
+                var gf = document.getElementById("usercreate");
+                var gfd = document.getElementById("usercreatediv");
+                if (gfd) {
+                    console.log("got maind");
+                    //create here
+                    let ds = document.createElement("div");
+                    ds.className = "row g-0 p-0 border";
+                    ds.id = "usercreate";
+                    ds.style =
+                        "width: 98%;margin: auto;height:min-content;max-height:40vh;overflow-y:auto;overflow-x: hidden;";
+
+                    if (gf) {
+                        console.log("got min d");
+                        //delete then add create
+                        gfd.removeChild(gf);
+                        gfd.appendChild(ds);
+                    } else {
+                        console.log("not got min d");
+                        //add
+                        gfd.appendChild(ds);
+                    }
+                } else {
+                    console.log("failed to get maind");
+                }
+                showp();
+                smembers();
+                //sio emit get userlist
+                //  sio.emit("selectuser", 'user list')
+            }
+        }
+
+        function getChat(i) {
+            var u = 0;
+            var d = document.getElementById("myframe");
+            var dbtn = document.getElementById("iframebtn");
+            var lb = document.getElementById(i);
+            console.log(d);
+            console.log(i);
+            var dv = document.getElementById("myframediv");
+            if (d && dv) {
+                dbtn.style.display = "block";
+                tframe("hide");
+                var v = "http://127.0.0.1:8080/ch/" + i;
+                f = t + i["Id"] + "/" + i["Chatname"];
+                d.src = v;
+                otherv("second");
+                dv.style.display = "block";
+            }
+        }
+
+        function getGroup(i) {
+            var s = 0;
+            var d = document.getElementById("myframe");
+            var dbtn = document.getElementById("iframebtn");
+            var lb = document.getElementById(i);
+            console.log(d);
+            console.log(i);
+            var dv = document.getElementById("myframediv");
+            if (d && dv) {
+                dbtn.style.display = "block";
+                tframe("hide");
+                var v = "http://127.0.0.1:8080/gchat/" + i;
+                f = t + i["Id"] + "/" + i["Chatname"];
+                d.src = v;
+                otherv("second");
+                dv.style.display = "block";
+            }
+        }
+
+        function showprofile() {
+            var fr = document.getElementById("myframe");
+            console.log(fr);
+            var dv = document.getElementById("myframediv");
+            if (dv && fr) {
+                tframe("hide");
+                v = "http://127.0.0.1:8080/account";
+                fr.src = v;
+                otherv("second");
+                showp();
+                dv.style.display = "block";
+            }
+        }
+
+        sio.on("mydata", function(data) {
+            console.log("got user profile data");
+            console.log(data);
+            var s = document.getElementById("smydp");
+            var dp = document.getElementById("myposter");
+            var name = document.getElementById("myname");
+            document.getElementById("chatname").innerText = data["Name"];
+            if (data && dp && name) {
+                //get user dp and name element
+
+                if (data["DP"] !== null) {
+                    dp.src = "/static/Images/DP/" + data["DP"];
+                    s.src = "/static/Images/DP/" + data["DP"];
+                } else {
+                    dp.src = "/static/Images/DP/default.png";
+                    s.src = "/static/Images/DP/default.png";
+                }
+                console.log(dp);
+                name.innerText = data["Name"];
+            }
+        });
+    </script>
+    <div class="container-fluid g-0 p-0" style="
+        width: 100vw;
+        height: 100%;
+        margin: auto;
+        z-index: 1;
+        position: fixed;
+      ">
+        <div class="row g-0 p-0" style="width: 100%; margin: auto">
+            <div class="col-12 col-xl-7 col-lg-11 col-sm-12 col-md-12 g-0 p-0 mb-0" style="margin: auto; width: 100%">
+                <div class="row g-0 p-0 mb-0" style="
+              width: 100%;
+              margin: auto;
+              height: auto;
+              font-size: 15px;
+              z-index: 2;
+            ">
+                    <script>
+                        function showp() {
+                            var ds = document.getElementById("profdiv");
+                            if (ds) {
+                                console.log("got profdiv");
+
+                                if (ds.style.display === "none") {
+                                    ds.style.display = "block";
+                                } else {
+                                    ds.style.display = "none";
+                                }
+                            } else {
+                                console.log("did not get div");
+                            }
+                        }
+                    </script>
+                </div>
+                <div class="row mt-0" style="
+              width: 100%;
+              margin: auto;
+              height: min-content;
+              overflow-y: auto;
+              overflow-x: hidden;
+            ">
+                    <div class="col-12 col-md-12 col-sm-12 col-lg-4 g-0 p-0 mt-0" id="chatdiv" style="
+                margin: auto;
+                margin-top: 5px;
+                font-size: small;
+                width: 100%;
+                align-items: center;
+                height: 92vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+              ">
+                        <div class="row g-0 p-0" style="
+                  width: 100%;
+                  margin: auto;
+                  align-content: flex-end;
+                  display: none;
+                ">
+                            <button type="button" class="col-3 btn btn-primary p-0 g-0 mr-0" style="width: min-content; margin: auto; height: 100%" onclick="otherv('main')">
+                  Back
+                </button>
+                        </div>
+                        <a class="row g-0 p-0" style="
+                  margin-bottom: 10px;
+                  justify-content: center;
+                  align-content: center;
+                  display: none;
+                ">
+                            <img class="border g-0 p-0 col-1 rounded" id="mydp" style="
+                    margin: auto;
+                    align-content: center;
+                    width: auto;
+                    height: 6vh;
+                  " />
+                        </a>
+                        <div class="row g-0 p-0" style="
+                  margin-bottom: 10px;
+                  border-radius: 15px;
+                  width: 100%;
+                  margin: auto;
+                  display: none;
+                ">
+                            <a href="#" id="myname" onclick="showprofile()" class="col-12 col-md-12 col-sm-12 col-lg-12 p-0 g-0" style="margin: auto; width: 100%; text-align: center">
+                            </a>
+                        </div>
+                        <div class="form form-inline g-1 p-0" style="
+                  width: 100%;
+                  font-size: small;
+                  margin: auto;
+                  display: none;
+                ">
+                            <input type="text" class="form-control col-9 g-0 p-0 col-sm-12 col-md-10 col-lg-9 mr-0 ml-0" style="margin: auto; width: 100%; text-align: center" onfocus="otherv('first')" placeholder="search contact" />
+                            <button type="button" class="col-3 btn btn-primary ml-0 p-0 g-0 mr-0" style="width: min-content; margin: auto; height: 100%">
+                  search
+                </button>
+                        </div>
+                        <div class="row mt-0 g-0 p-0 bg-light" style="
+                  height: min-content;
+                  scroll-behavior: smooth;
+                  overflow-y: auto;
+                  overflow-x: hidden;
+                  margin: auto;
+                  width: 100%;
+                  font-size: larger;
+                " id="allchats">
+                            <div class="row g-0 p-0" style="
+                    width: 100%;
+                    margin: auto;
+                    height: max-content;
+                    position: absolute;
+                    margin-top: 40px;
+                    z-index: 4;
+                  ">
+                                <div class="col-12 g-0 p-0 bg-white mt-0 mr-1" id="profdiv" style="
+                      width: 100%;
+                      margin: auto;
+                      align-content: center;
+                      z-index: 2;
+                      display: none;
+                    ">
+                                    <div class="row g-0 p-0 mt-1 bg-light" style="
+                        width: 100%;
+                        margin: auto;
+                        height: 80vh;
+                        align-content: flex-start;
+                      ">
+                                        <div class="row g-0 p-0 mt-1" style="width: 100%; margin: auto; height: auto">
+                                            <img class="border" id="myposter" style="
+                            height: 80px;
+                            width: 80px;
+                            border-radius: 40px;
+                            margin: auto;
+                          " />
+                                        </div>
+                                        <h4 class="col-12 g-0 p-0 mt-1 mr-3 mb-0" style="
+                          text-align: center;
+                          margin: auto;
+                          width: 100%;
+                          height: min-content;
+                        " id="chatname">
+                                            Peter Njenga wambua
+                                        </h4>
+                                        <label class="col-12 g-2 p-1 mb-0" onclick="showprofile()" style="
+                          text-align: center;
+                          margin: auto;
+                          width: 100%;
+                          height: min-content;
+                          margin-top: 2px;
+                        ">
+                        My Profile
+                      </label>
+
+                                        <label class="col-12 g-2 p-1 mb-0" onclick="rd()" style="
+                          text-align: center;
+                          margin: auto;
+                          width: 100%;
+                          height: min-content;
+                          margin-top: 2px;
+                        ">
+                        logout
+                      </label>
+                                        <script>
+                                            function rd() {
+                                                window.location = "http://127.0.0.1:8080/signout";
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-12 mt-2 ml-auto mr-auto g-0 p-0" style="width: 100%; margin: auto; height: max-content">
+                                <div class="form form-inline g-0 p-0" style="
+                      width: 100%;
+                      font-size: small;
+                      margin: auto;
+                      height: fit-content;
+                    ">
+                                    <img class="border ml-2 mr-2" src="/static/Images/Icons/male.jpeg" id="smydp" style="
+                        height: 40px;
+                        width: 40px;
+                        border-radius: 20px;
+                        margin: auto;
+                      " onclick="showp()" />
+                                    <input type="text" id="q" oninput="scontact()" class="form-control col-9 ml-0 mr-0 ml-0 col-sm-10 col-md-10 col-lg-9" style="margin: auto; width: 100%; text-align: left" onfocus="otherv('first')" placeholder="search contact" />
+                                </div>
+                            </div>
+                            <h6 class="col-12 col-lg-12 ml-0 mr-0 mt-0 mb-2" style="
+                    margin: auto;
+                    width: 100%;
+                    height: max-content;
+                    text-align: center;
+                    font-size: 21px;
+                    color: blue;
+                  ">
+                                Chats
+                            </h6>
+
+                            <div class="col-12 col-md-12 col-sm-12 col-lg-12 mt-0 g-0 p-0" id="mygroups" style="
+                    margin-bottom: 2px;
+                    border-radius: 15px;
+                    height: max-content;
+                    display: none;
+                    margin: auto;
+                    width: 100%;
+                    font-size: 21px;
+                  "></div>
+                            <div class="col-11 col-md-11 col-sm-11 col-lg-11 mt-0 g-0 p-0" id="mychats" style="
+                    margin-bottom: 2px;
+                    border-radius: 5px;
+                    height: max-content;
+                    margin: auto;
+                    width: 90%;
+                    font-size: 21px;
+                  "></div>
+                        </div>
+                        <script>
+                            sio.on("chatdata", function(data) {
+                                console.log("got new chat conversation");
+                                console.log(data);
+                                if (data) {
+                                    if (data["Type"] === "Chat" || data["Type"] === "Group") {
+                                        var mdiv = document.createElement("div");
+                                        mdiv.style =
+                                            "width:100%;display:flex;margin:2px;height:65px;border-radius:10px;overflow:hidden;font-size:15px";
+                                        mdiv.className = "row border";
+                                        mdiv.id = "contact" + data["Id"];
+
+                                        var mg = document.createElement("img");
+                                        mg.style = "width:60px;height:60px;border-radius:30px";
+                                        mg.className = "border";
+                                        mg.id = "smydp" + data["UserId"];
+                                        console.log(data["dp"]);
+
+                                        var mp = document.createElement("p");
+                                        mp.style = "height:40px;font-size:17px;overflow:hidden";
+                                        mp.className = "col-9 ";
+                                        mp.innerText = data["Name"];
+
+                                        var mlabel = document.createElement("label");
+                                        mlabel.style =
+                                            "height:max-content;width:max-content;text-align:right,z-index:3;text-align:center;font-size:small;position:absolute;right:0px;color:red;border-radius:10px";
+                                        mlabel.id = "unread" + data["Id"];
+                                        mlabel.className =
+                                            " p-1 g-1 ml-auto mr-0 border bg-white";
+                                        mlabel.innerText = "0";
+                                        console.log("mlabel", mlabel);
+
+                                        mdiv.appendChild(mg);
+                                        mdiv.appendChild(mp);
+                                        mdiv.appendChild(mlabel);
+
+                                        if (data["Type"] === "Chat") {
+                                            //get chat div and preappend
+
+                                            if (data["dp"] != null) {
+                                                mg.src = "/static/Images/DP/" + data["dp"];
+                                            } else {
+                                                mg.src = "/static/Images/DP/default.png";
+                                            }
+
+                                            mdiv.addEventListener("click", function() {
+                                                console.log("just selected room");
+                                                console.log(data["Id"]);
+                                                getChat(data["Id"]);
+                                            });
+                                            var maind = document.getElementById("mychats");
+                                            if (maind) {
+                                                maind.append(mdiv);
+                                            }
+                                        }
+                                        if (data["Type"] === "Group") {
+                                            if (data["dp"] != null) {
+                                                mg.src = "/static/Images/DP/" + data["dp"];
+                                            } else {
+                                                mg.src = "/static/Images/DP/default.png";
+                                            }
+
+                                            //get group div and preappend
+                                            mdiv.addEventListener("click", function() {
+                                                console.log("just selected groom");
+                                                console.log(data["Id"]);
+                                                getGroup(data["Id"]);
+                                            });
+                                            // var maind = document.getElementById("mygroups")
+                                            //if (maind) {
+                                            //   maind.append(mdiv)
+                                            // }
+                                            var maind = document.getElementById("mychats");
+                                        }
+                                        userlist.push(data);
+                                    }
+                                    if (data["Type"] === "Unread") {
+                                        //unread count
+                                        var d = "unread" + data["Id"];
+                                        var l = document.getElementById(d);
+                                        if (l) {
+                                            console.log("updating unread count");
+                                            console.log(l);
+
+                                            l.innerText = data["Unread"];
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                        <script>
+                            sio.on("unreadcount", function(da) {
+                                console.log("updating unread count", da);
+                                var id = "unread" + da;
+                                var c = document.getElementById(id);
+                                var cc = Number(c.innerText);
+                                console.log(c);
+                                console.log(cc);
+                                c.innerText = cc + 1;
+                            });
+                            sio.on("unnreadcount", function(da) {
+                                console.log("updating unread count", da);
+                                var id = "unread" + da["Id"];
+                                var c = document.getElementById(id);
+
+                                c.innerText = da["Count"];
+                            });
+                        </script>
+                    </div>
+                    <div class="col-8 col-md-6 col-sm-6 col-lg-8 g-0 p-0 mt-0 mb-0" id="filediv" style="
+                height: 94vh;
+                width: 100%;
+                margin: auto;
+                overflow-x: hidden;
+                overflow-y: initial;
+              ">
+                        <!--
+                             <div class="row mt-0 mb-1" style="margin: auto;">
+                            <button onclick="tframe('show')" class="mb-auto mt-1 p-0 g-0 btn btn-primary form-control"
+                                style="height:min-content;width: min-content;" name="audio">Home</button>
+                        </div>
+                        -->
+
+                        <script>
+                            function tframe(cd) {
+                                var f = document.getElementById("myframediv");
+                                var h = document.getElementById("myhome");
+                                if (cd === "show") {
+                                    console.log("hidding frame");
+                                    f.style.display = "none";
+                                    h.style.display = "block";
+                                }
+                                if (cd === "hide") {
+                                    console.log("showing frame");
+                                    f.style.display = "block";
+                                    h.style.display = "none";
+                                }
+                            }
+
+                            function togglefiles() {
+                                var f = document.getElementById("fdiv");
+                                var c = document.getElementById("creatediv");
+                                console.log(f.style.display);
+                                console.log(f);
+                                var bt = document.getElementById("backbtn");
+
+                                if (f && c) {
+                                    if (f.style.display === "none") {
+                                        console.log("already hidden");
+                                        tframe("show");
+                                        c.style.display = "none";
+                                        f.style.display = "block";
+                                        bt.style.display = "block";
+
+                                        otherv("second");
+                                        showp();
+                                    } else if (f.style.display === "block") {
+                                        console.log("already");
+                                        tframe("show");
+                                        f.style.display = "block";
+                                        c.style.display = "none";
+                                        bt.style.display = "block";
+                                        showp();
+                                    } else {
+                                        tframe("show");
+                                        f.style.display = "block";
+                                        c.style.display = "none";
+                                        bt.style.display = "block";
+                                        showp();
+                                    }
+                                }
+                            }
+                        </script>
+                        <script>
+                            function tff(md, pd) {
+                                console.log(md);
+                                console.log(pd);
+                                var d = document.getElementById(md);
+                                var p = document.getElementById(pd);
+                                console.log(d.style.display);
+
+                                if (p && d) {
+                                    if (d.style.display === "none") {
+                                        p.style.display = "block";
+                                        d.style.display = "flex";
+                                    } else if (d.style.display === "block") {
+                                        p.style.display = "none";
+                                        d.style.display = "none";
+                                    } else if (d.style.display === "flex") {
+                                        p.style.display = "none";
+                                        d.style.display = "none";
+                                    } else if (d.style.display === false) {
+                                        p.style.display = "block";
+                                        d.style.display = "flex";
+                                    } else {
+                                        p.style.display = "block";
+                                        d.style.display = "flex";
+                                    }
+                                }
+                            }
+                            sio.on("myfiles", function(data) {
+                                console.log(data);
+                                var mfdiv = document.getElementById("myfilesdiv");
+                                if (data["Type"] == "audio") {
+                                    console.log("got audio");
+                                    var audiv = document.getElementById("audiodiv");
+                                    if (audiv) {
+                                        var adiv = document.createElement("div");
+                                        adiv.className = "row border";
+                                        adiv.style = "width: 100%;height:70px;margin-top:5px";
+
+                                        var aud = document.createElement("audio");
+                                        aud.style = "width:100%;height:40px;margin-top:5px";
+                                        aud.className = "col-12 border";
+                                        aud.id = data["Id"];
+                                        var s = "/static/Images/MessagePictures/" + data["Name"];
+                                        aud.src = s;
+
+                                        var na = document.createElement("p");
+                                        na.className = "col-12 border";
+                                        na.style = "margin: 0px;";
+                                        na.id = "name" + data["Id"];
+                                        na.innerText = data["Name"];
+
+                                        adiv.appendChild(na);
+                                        adiv.appendChild(aud);
+                                        audiv.appendChild(adiv);
+                                    }
+                                }
+                                if (data["Type"] == "video") {
+                                    console.log("got video");
+                                    var audiv = document.getElementById("videodiv");
+                                    if (audiv) {
+                                        var aud = document.createElement("video");
+                                        aud.style = "width:90px;height:100px;margin:3px";
+                                        aud.className = "border";
+                                        aud.id = data["Id"];
+                                        var s = "/static/Images/MessagePictures/" + data["Name"];
+                                        aud.src = s;
+
+                                        audiv.appendChild(aud);
+                                    }
+                                }
+                                if (data["Type"] == "image") {
+                                    console.log("got image");
+                                    var audiv = document.getElementById("imagediv");
+                                    console.log(audiv);
+
+                                    if (audiv) {
+                                        console.log("creating image");
+
+                                        var aud = document.createElement("img");
+                                        aud.style =
+                                            "width:90px;height:100px;margin:2px;display:flex";
+                                        aud.className = "border";
+                                        aud.id = data["Id"];
+                                        var s = "/static/Images/MessagePictures/" + data["Name"];
+                                        aud.src = s;
+
+                                        audiv.appendChild(aud);
+                                    }
+                                }
+                            });
+                        </script>
+
+                        <div id="myhome" class="row g-0 p-0 mt-0 bg-light" style="
+                  width: 100%;
+                  height: fit-content;
+                  margin: auto;
+                  align-content: center;
+                  display: block;
+                ">
+                            <div class="row bg-light" style="margin: auto; width: 100%; height: max-content">
+                                <!-- <button class="col-1 btn btn-primary" style="margin: auto;width: max-content;height: max-content;">back</button>
+                               -->
+                                <img class="border" id="backbtn" style="
+                      float: left;
+                      height: 25px;
+                      width: 40px;
+                      display: none;
+                    " onclick="secondback()" src="/static/Images/Icons/back.png" />
+                            </div>
+                            <script>
+                                function secondback() {
+                                    //hide create and profile and myfiles
+                                    var g = document.getElementById("creatediv");
+                                    let f = document.getElementById("fdiv");
+                                    let bt = document.getElementById("backbtn");
+                                    if (g && f && bt) {
+                                        bt.style.display = "none";
+                                        g.style.display = "none";
+                                        f.style.display = "none";
+                                        tframe("show");
+                                        otherv("first");
+                                    } else {
+                                        bt.style.display = "none";
+                                        g.style.display = "none";
+                                        f.style.display = "none";
+                                        tframe("show");
+                                        otherv("first");
+                                    }
+                                }
+                            </script>
+                            <div class="row mt-0 m-0 p-0 g-0" id="creatediv" style="
+                    margin: auto;
+                    width: 100%;
+                    margin-top: 60px;
+                    height: fit-content;
+                    display: none;
+                  ">
+                                <span class="col-12 col-md-12 col-sm-12 col-lg-12"></span>
+                                <div class="col-12 col-lg-6 col-sm-12 col-md-12 p-0 g-0 mt-0 mb-auto ml-auto border" id="newg" style="
+                      display: block;
+                      border-radius: 15px;
+                      width: 100%;
+                      margin: auto;
+                    ">
+                                    <div id="kk" class="row g-0 p-0" style="width: 100%; margin: auto">
+                                        <label class="col-4 col-lg-4 col-sm-4 col-md-4 form-control form-label" style="margin: auto; margin-top: 2px">Name</label
+                      >
+                      <input
+                        type="text"
+                        name="newg"
+                        id="gname"
+                        required
+                        oninput=""
+                        onchange="getselect('gname')"
+                        style="
+                          margin: auto;
+                          text-align: center;
+                          word-break: break-all;
+                          border-radius: 5px;
+                        "
+                        class="col-7 col-lg-7 col-sm-7 col-md-7 form-control p-0 g-0"
+                      />
+
+                      <label
+                        class="col-4 col-lg-4 col-sm-4 col-md-4 form-control form-label mt-1"
+                        style="margin: auto"
+                        >Type</label
+                      >
+                      <select
+                        class="col-7 col-lg-7 col-sm-7 col-md-7 form-control form-input mt-1"
+                        id="gtype"
+                        oninput="getselect('gtype')"
+                        style="margin: auto"
+                      >
+                        <option value="private">Private</option>
+                        <option value="public" active>Public</option>
+                      </select>
+                      <h2
+                        class="col-12 col-lg-7 col-sm-12 col-md-7 mt-1 mb-1"
+                        style="
+                          margin: auto;
+                          width: 100%;
+                          text-align: center;
+                          font-size: small;
+                          color: blue;
+                        "
+                      >
+                        Select group members
+                      </h2>
+                      <h2
+                        class="col-12 col-lg-3 col-sm-12 col-md-3"
+                        style="
+                          margin: auto;
+                          width: 100%;
+                          text-align: center;
+                          font-size: small;
+                          color: red;
+                        "
+                      >
+                        42 selected
+                      </h2>
+
+                      <div
+                        class="row g-0 p-0 border"
+                        id="usercreatediv"
+                        style="
+                          width: 100%;
+                          margin: auto;
+                          height: 60vh;
+                          overflow-y: auto;
+                          overflow-x: hidden;
+                          display: block;
+                        "
+                      >
+                        <div
+                          class="row g-0 p-0 border"
+                          id="usercreate"
+                          style="
+                            width: 98%;
+                            margin: auto;
+                            height: min-content;
+                            max-height: 40vh;
+                            overflow-y: auto;
+                            overflow-x: hidden;
+                            display: block;
+                          "
+                        ></div>
+                      </div>
+                      <script>
+                        function l() {
+                          console.log("elected");
+                        }
+
+                        function getselect(id) {
+                          console.log("clicked select");
+                          if (id && newgroup) {
+                            if (id === "gname") {
+                              console.log("got name");
+                              var n = document.getElementById("gname");
+                              if (n) {
+                                newgroup["Name"] = n.value;
+                                console.log("name value changed");
+                              } else {
+                                console.log(n);
+                                console.log("name value not changed");
+                              }
+                            } else if (id === "gtype") {
+                              console.log("got type");
+                              var n = document.getElementById("gtype");
+                              if (n) {
+                                newgroup["Type"] = n.value;
+                                console.log("type value changed");
+                              } else {
+                                console.log("type value not changed");
+                              }
+                            } else {
+                              console.log("got change");
+                              if (newgroup[id]) {
+                                console.log("already selected");
+                                console.log(newgroup[id]);
+                                delete newgroup[id];
+                                console.log(newgroup);
+                                console.log("added");
+                              } else {
+                                console.log(newgroup);
+                                var dd = "user" + id;
+                                // console.log(dd);
+                                newgroup[dd] = id;
+                                console.log(newgroup);
+                                console.log("added");
+                              }
+                            }
+                          } else {
+                            console.log("data missing");
+                          }
+                        }
+
+                        function creategroup() {
+                          if (newgroup && newgroup["Name"] !== "") {
+                            //sio.emit this
+                            console.log(newgroup);
+                            console.log("sending create data");
+                            sio.emit("createG", newgroup);
+                            newgroup = [];
+                            //delete usercreate
+                          } else {
+                            console.log("failed missing data");
+                          }
+                        }
+
+                        function manageselect(gid, pid, type) {
+                          if (gid && pid) {
+                            da = {
+                              GroupId: gid,
+                              UserId: pid,
+                              Type: type,
+                            };
+                            //sio.emeit this
+                          } else {
+                            console.log("did not emit values missing");
+                          }
+                        }
+
+                        function scontact() {
+                          console.log("searching");
+                          var d = document.getElementById("q");
+                          var dv = d.value;
+                          console.log(d.value);
+
+                          if (userlist.length > 0) {
+                            console.log("in userlist");
+                            console.log(userlist);
+                            for (var u = 0; u < userlist.length; u++) {
+                              var f = userlist[u];
+                              var y = "contact" + f["Id"];
+                              var ss = document.getElementById(y);
+                              let n = f["Name"];
+                              console.log(n);
+
+                              if (ss) {
+                                if (d.value === "") {
+                                  ss.style.display = "flex";
+                                } else {
+                                  if (n.match(dv)) {
+                                    //check if in hidelist and remove
+                                    console.log("match found");
+                                    console.log(ss);
+                                    ss.style.display = "flex";
+                                  } else {
+                                    ss.style.display = "none";
+                                  }
+                                }
+                              } else {
+                                console.log("did not get user data node");
+                              }
+                            }
+                          }
+                        }
+
+                        function listingroup(gid) {
+                          //loop through userlist
+                          //get grouplist
+                          //set member and none member
+                          if (userlist && userlist.length > 0) {
+                            for (var u = 0; u < userlist.length; u++) {
+                              var f = userlist[u];
+                              var glist = f["GroupList"];
+                              if (glist.length > 0) {
+                                console.log("got group list");
+                                console.log(glist.length);
+                                if (glist.includes(gid)) {
+                                  console.log("in this group");
+                                  //add to memberuser
+                                } else {
+                                  console.log("not in this group");
+                                  //add to nonmemberuser
+                                }
+                              } else {
+                                console.log("not in any group");
+                              }
+                            }
+                          }
+                        }
+                      </script>
+                      <span class="col-2"></span>
+                      <button
+                        name="reset"
+                        value="reset"
+                        type="reset"
+                        onclick="createg()"
+                        class="col-4 col-lg-3 col-sm-3 col-md-3 g-0 p-0 mr-1 ml-auto btn btn-primary"
+                        style="margin: auto; text-align: center"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        name="sub"
+                        onclick="creategroup()"
+                        class="col-4 col-lg-3 col-sm-3 col-md-3 p-0 g-0 btn btn-primary ml-2 mr-auto"
+                        style="text-align: center; margin: auto"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <script>
+                  function smembers() {
+                    if (userlist && userlist.length > 0) {
+                      for (var us = 0; us < userlist.length; us++) {
+                        console.log(userlist[us]);
+                        var user = userlist[us];
+                        if (user["Type"] === "Group") {
+                        } else {
+                          var md = document.createElement("div");
+                          md.className =
+                            "row mt-1 g-0 p-0 shadow-sm rounded mb-0";
+                          md.style =
+                            "width: 100%;border-radius: 3px;height:45px;margin:auto";
+
+                          var im = document.createElement("img");
+                          im.className = "border ml-1";
+                          im.style =
+                            "width: 40px;height: 40px;border-radius: 20px;";
+                          im.src = user["DP"];
+
+                          var tm = document.createElement("label");
+                          tm.className =
+                            "form-label g-0 p-0 col-lg-6 col-sm-6 col-md-6 col-6 ml-3 mt-0";
+                          tm.style = "width: 100%;margin: auto;";
+                          tm.innerText = user["Name"];
+
+                          var tb = document.createElement("input");
+                          tb.className = "mr-3 form-control";
+                          tb.type = "checkbox";
+                          tb.style = "width: auto;height: auto;margin: auto;";
+                          tb.addEventListener("input", function () {
+                            console.log("clicking select");
+                            var id = user["Id"];
+                            console.log(id);
+                            getselect(id);
+                          });
+
+                          var maind = document.getElementById("usercreate");
+                          if (maind) {
+                            md.append(im);
+                            md.append(tm);
+                            md.append(tb);
+                            maind.append(md);
+                          } else {
+                            console.log("did not get main node to append to");
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                  sio.on("userselect", function (data) {
+                    console.log("got one user data");
+                    console.log(data);
+                    if (data) {
+                      //create div as above
+                      var md = document.createElement("div");
+                      md.className =
+                        "row g-0 p-0 shadow-sm bg-light rounded m-0";
+                      md.style =
+                        "width: 100%;border-radius: 3px;height:45px;display:block";
+
+                      var im = document.createElement("img");
+                      im.className = "border ml-1";
+                      im.style =
+                        "width: 40px;height: 40px;border-radius: 20px;";
+                      im.src = data["DP"];
+
+                      var tm = document.createElement("label");
+                      tm.className =
+                        "form-label g-0 p-0 col-lg-6 col-sm-6 col-md-6 col-6 ml-3 mt-0";
+                      tm.style = "width: 100%;margin: auto;";
+                      tm.innerText = data["Name"];
+
+                      var tb = document.createElement("input");
+                      tb.className = "mr-3 form-control";
+                      tb.type = "checkbox";
+                      tb.style = "width: auto;height: auto;margin: auto;";
+
+                      var maind = document.getElementById("usercreate");
+                      if (maind) {
+                        md.append(im);
+                        md.append(tm);
+                        md.append(tb);
+                        maind.append(md);
+                      } else {
+                        console.log("did not get main node to append to");
+                      }
+                    } else {
+                      console.log("did not get any data");
+                    }
+                  });
+                </script>
+                <div
+                  class="row g-0 p-0 mt-0"
+                  id="fdiv"
+                  style="
+                    margin: auto;
+                    width: 100%;
+                    margin-top: 0%;
+                    margin-bottom: 0px;
+                    height: fit-content;
+                    display: block;
+                    overflow-y: hidden;
+                    font-size: 15px;
+                    display: none;
+                  "
+                >
+                  <div
+                    class="row border"
+                    id="myfilesdiv"
+                    style="margin: auto; width: 100%; display: block"
+                  >
+                    <p
+                      class="col-12 col-lg-6 col-md-8 col-sm-12 g-1 p-1 mt-2 border"
+                      onclick="togglefiles()"
+                      style="margin: auto; text-align: center; font-size: 16px"
+                    >
+                      My Files
+                    </p>
+                    <div
+                      class="row border"
+                      style="width: 97%; margin: auto; display: flex"
+                    >
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        onclick="tff('mp','pp')"
+                        style="margin: auto; text-align: left"
+                      >
+                        My Pictures
+                      </p>
+                      <div
+                        class="row border"
+                        id="imagediv"
+                        style="
+                          width: 100%;
+                          margin: 5px;
+                          height: 5px;
+                          overflow: hidden;
+                          display: flex;
+                        "
+                      ></div>
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        id="pp"
+                        style="margin: auto; text-align: right"
+                      >
+                        show more
+                      </p>
+                    </div>
+                    <div
+                      class="row border"
+                      style="width: 97%; margin: auto; display: flex"
+                    >
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        onclick="tff('mv','vp')"
+                        style="margin: auto; text-align: left"
+                      >
+                        My Videos
+                      </p>
+                      <div
+                        class="row border"
+                        id="videodiv"
+                        style="
+                          width: 100%;
+                          margin: 5px;
+                          height: 5px;
+                          overflow: hidden;
+                          display: flex;
+                        "
+                      ></div>
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        id="vp"
+                        style="margin: auto; text-align: right"
+                      >
+                        show more
+                      </p>
+                    </div>
+                    <div
+                      class="row border"
+                      style="width: 97%; margin: auto; display: flex"
+                    >
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        onclick="tff('mdp','mpp')"
+                        style="margin: auto; text-align: left"
+                      >
+                        My Documents
+                      </p>
+                      <div
+                        class="row border"
+                        id="mdp"
+                        style="
+                          width: 100%;
+                          margin: 5px;
+                          height: 5px;
+                          overflow: hidden;
+                          display: flex;
+                        "
+                      ></div>
+
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        id="mpp"
+                        style="margin: auto; text-align: right"
+                      >
+                        show more
+                      </p>
+                    </div>
+                    <div
+                      class="row border"
+                      style="width: 97%; margin: auto; display: flex"
+                    >
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        onclick="tff('mo','po')"
+                        style="margin: auto; text-align: left"
+                      >
+                        My Others
+                      </p>
+                      <div
+                        class="row border"
+                        id="mo"
+                        style="
+                          width: 100%;
+                          margin: 5px;
+                          height: 5px;
+                          overflow: hidden;
+                          display: flex;
+                        "
+                      ></div>
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        id="po"
+                        style="margin: auto; text-align: right"
+                      >
+                        show more
+                      </p>
+                    </div>
+                    <div
+                      class="row border"
+                      style="width: 97%; margin: auto; display: flex"
+                    >
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        onclick="tff('ad','ap')"
+                        style="margin: auto; text-align: left"
+                      >
+                        My Audio
+                      </p>
+                      <div
+                        class="row border"
+                        id="audiodiv"
+                        style="
+                          width: 100%;
+                          margin: 5px;
+                          height: 155px;
+                          overflow: hidden;
+                          display: flex;
+                        "
+                      ></div>
+                      <p
+                        class="col-12 col-md-12 col-sm-12 col-lg-12 border"
+                        id="ap"
+                        style="margin: auto; text-align: right"
+                      >
+                        show more
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="row g-0 p-0 bg-white"
+                style="
+                  width: 100%;
+                  margin: auto;
+                  display: none;
+                  height: 94vh;
+                  overflow: hidden;
+                "
+                id="myframediv"
+              >
+                <div
+                  class="row bg-light"
+                  style="margin: auto; width: 100%; height: max-content"
+                >
+                  <!-- <button class="col-1 btn btn-primary" style="margin: auto;width: max-content;height: max-content;">back</button>
+                                -->
+                  <img
+                    class="border"
+                    id="iframebtn"
+                    style="
+                      float: left;
+                      height: 25px;
+                      width: 40px;
+                      display: block;
+                      position: absolute;
+                      z-index: 4;
+                      margin-left: 0%;
+                      left: 0%;
+                    "
+                    onclick="hideframe()"
+                    src="/static/Images/Icons/back.png"
+                  />
+                </div>
+                <iframe
+                  class="col-12 g-0 p-0"
+                  id="myframe"
+                  style="
+                    height: 94vh;
+                    display: block;
+                    margin: auto;
+                    width: 100%;
+                  "
+                ></iframe>
+                <script>
+                  function hideframe() {
+                    console.log("hidding frme");
+                    let f = document.getElementById("myframediv");
+                    if (f) {
+                      f.style.display = "none";
+                      console.log("frame hidden");
+                      otherv("first");
+                    }
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      ///toggle mainview
+      function mainv() {
+        //return to default
+        //get node
+        var chatlist = document.getElementById("chatdiv");
+        var filelist = document.getElementById("filediv");
+
+        if (chatlist && filelist) {
+          console.log("got both nodes");
+          console.log(chatlist);
+          console.log(filelist);
+
+          chatlist.className =
+            "col-12 col-md-12 col-sm-12 col-lg-3 g-0 p-0 mt-0";
+          filelist.className =
+            "col-0 col-md-0 col-sm-0 col-lg-9 g-0 p-0 mt-0 mb-0";
+        } else {
+          console.log("error getting nodes");
+          console.log(chatlist);
+          console.log(filelist);
+        }
+      }
+
+      function otherv(op) {
+        //return to default
+        //get node
+        var chatlist = document.getElementById("chatdiv");
+        var filelist = document.getElementById("filediv");
+
+        if (chatlist && filelist) {
+          console.log("got both nodes");
+          console.log(chatlist);
+          console.log(filelist);
+          if (op === "second") {
+            filelist.className =
+              "col-12 col-md-12 col-sm-12 col-lg-8 g-0 p-0 mt-0 mb-0 mr-0 ml-auto";
+            chatlist.style.position = "absolute";
+            filelist.style.position = "relative";
+
+            filelist.style.zIndex = "2";
+            chatlist.style.zIndex = "1";
+            chatlist.className =
+              "col-12 col-md-12 col-sm-12 col-lg-4 g-0 p-0 mt-0";
+          }
+          if (op === "first") {
+            chatlist.className =
+              "col-12 col-md-12 col-sm-12 col-lg-4 g-0 p-0 mt-0";
+            filelist.className =
+              "col-0 col-md-0 col-sm-0 col-lg-8 g-0 p-0 mt-0 mb-0";
+            filelist.style.position = "relative";
+            //filelist.style.marginLeft="80%"
+            chatlist.style.position = "relative";
+            chatlist.style.zIndex = "2";
+            filelist.style.zIndex = "1";
+          }
+          if (op === "main") {
+            chatlist.className =
+              "col-8 col-md-12 col-sm-12 col-lg-4 g-0 p-0 mt-0";
+            filelist.className =
+              "col-4 col-md-6 col-sm-6 col-lg-8 g-0 p-0 mt-0 mb-0";
+            filelist.style.position = "relative";
+            chatlist.style.position = "relative";
+            chatlist.style.zIndex = "2";
+            filelist.style.zIndex = "1";
+          }
+          console.log("finished changing view");
+        } else {
+          console.log("error getting nodes");
+          console.log(chatlist);
+          console.log(filelist);
+        }
+      }
+    </script>
+  </body>
+</html>

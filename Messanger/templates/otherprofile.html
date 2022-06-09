@@ -1,0 +1,472 @@
+<html>
+
+
+<head>
+    <title>Saved</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        sio = io.connect(namespace = "/otherprofile")
+    </script>
+</head>
+
+<body class="container" onload="bodyload({{udata}})" style="height:100vh;width:100vw;margin: auto;align-content: center;">
+    <script>
+        var myeducation = [];
+        var mymedical = [];
+        var mypersonal;
+        var myemergency = [];
+        var myaccount = [];
+        var dtas;
+        function bodyload(udata) {
+            console.log('got udata');
+            console.log(udata);
+            console.log(udata['Id']);
+            //emit this id
+            sio.emit("OtherProfile", udata['Id'])
+        }
+
+    </script>
+
+    <div class="row mb-2 g-0 p-0 border ml-0 mr-auto" style="width:90vw;margin:auto">
+        kkkkkk
+        <img id="DP" class="border" height="300px" width="300px"
+            style="margin:auto;border-radius:150px;margin-bottom:10px" src="/static/IMG.jpg">
+            yyyyyyyy
+    </div>
+ 
+
+    <div class="row form-group mb-2 g-0 p-0 border ml-0 mr-auto" id="dets" style="width:90vw;margin:auto">
+        <div class="row  mb-2 g-0 p-0" style="width:100%;margin:auto">
+            hhhhh
+            <p class="col-lg-11 col-md-11 col-sm-11 col-11  " style="text-align: center;">Account Details</p>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  form-label"
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Email</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Email"
+                style="margin:auto;height:fit-content;overflow: hidden;"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  form-label"
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Level</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Role" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Status</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Status" style="margin:auto;height:fit-content">Active</label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  form-label"
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Description</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Desc" style="margin:auto;height:fit-content"></label>
+        </div>
+        <div class="row mb-2 g-0 p-2" style="width:100%;margin:auto">
+            <p class="col-lg-11 col-md-11 col-sm-11 col-11 " style="text-align: center;">Personal</p>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">First Name</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="fname" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Second Name</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="sname" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Third Name</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="tname" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Marital</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="mstatus" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Sex</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="sex" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Occupation</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="occupation" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="fcontact" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="scontact" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">D.O.B</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="dob" style="margin:auto;height:fit-content"></label>
+        </div>
+        <div class="row mb-2 g-0 p-2" style="width:100%;margin:auto">
+            <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align: center;">Medical</p>
+            <div class="row " id="Allergy" style="width:100%;margin:auto">
+                <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align:left">Allergies</p>
+            </div>
+            <div class="row " id="Disability" style="width:100%;margin:auto">
+                <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align:left;">Disability
+                </p>
+            </div>
+            <div class="row " id="Chronic" style="width:100%;margin:auto">
+                <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align: left;">Chronic</p>
+            </div>
+        </div>
+        <div class="row mb-2 g-0 p-2" style="width:100%;margin:auto">
+            <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align: center;">Education</p>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Primary
+                School</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Primary" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">High
+                School</label>
+            <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="Secondary" style="margin:auto;height:fit-content"></label>
+            <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                style="height:fit-content;margin:auto;margin-bottom:auto;margin-top:2px;">Tertiary</label>
+            <div for="" class="col-8 border bg-light" id="Tertiary" style="margin:auto;height:fit-content;"></div>
+        </div>
+        <script>
+            sio.on('updatedata', function (data) {
+                console.log('got update data');
+                console.log(data);
+                if (data) {
+                    //check category
+                    if (data['Type'] === 'Account') {
+                        ///update fields
+                        console.log('got account');
+                        var y = data['keys']
+                        for (var r = 0; r < y.length; r++) {
+                            var c = y[r]
+                            console.log(y[r]);
+
+                            var nd = document.getElementById(c)
+
+                            if (nd) {
+                                console.log('got main node');
+                                console.log(nd);
+                                //update value
+                                if (c === "DP") {
+                                    nd.src = "/static/IMG.jpg"
+                                }
+                                else {
+                                    nd.innerText = data[c]
+                                }
+
+                            }
+
+                        }
+
+                    }
+                    else if (data['Type'] === 'Personal') {
+                        ///update fields
+                        console.log('got personal');
+                        //get fields and update innertext and value for edit div
+                        var y = data['keys']
+                        for (var r = 0; r < y.length; r++) {
+                            console.log(y[r]);
+                            var n = y[r]
+                            var nd = document.getElementById(n)
+
+                            if (nd) {
+                                console.log('got main node');
+                                console.log(nd);
+                                //update value
+                                nd.innerText = data[n]
+                            }
+                        }
+                        mypersonal = data;
+                    }
+                    else if (data['Type'] === 'Education') {
+                        ///update fields first three fields then create
+                        console.log('got education');
+                        if (data['Level'] === 'Primary' || data['Level'] === 'Secondary') {
+                            //get field and update innertext and value for edit div
+                            console.log('got listed');
+                            var n = data['Level']
+                            var nd = document.getElementById(n)
+                            var ne = "e" + data['Level']
+                            console.log(ne);
+                            data['CMD'] = 'Update'
+                            myeducation.push(data)
+                            if (nd) {
+                                //update value
+                                console.log('got main node');
+                                console.log(nd);
+                                nd.innerText = data['Institution']
+                            }
+                        } else {
+                            //create node
+                            console.log('got tertiary');
+                            if (data['CMD'] === 'Create') {
+                                console.log("got create");
+                                data['CMD'] = 'Update'
+                                myeducation.push(data)
+                                //remember to create edit nodes
+                                var ed = document.getElementById("Tertiary");
+                                if (ed) {
+                                    console.log(ed);
+                                    console.log('got edu div');
+
+                                    var l = document.createElement('label');
+                                    l.className = "col-lg-1 col-md-1 col-sm-11 border";
+                                    l.style = "margin: auto;";
+                                    l.innerText = "Other"
+
+                                    var ll = document.createElement('label');
+                                    ll.style = "margin:5px;"
+                                    // ll.id = "ePrimary"
+                                    ll.id = "minst" + data['Id']
+                                    ll.innerText = data['Institution']
+                                    ll.className = "col-lg-1 col-md-1 col-sm-11 border"
+
+                                    var ld = document.createElement('div');
+                                    ld.className = "row border"
+                                    ld.style = "width:100%;margin:auto"
+                                    ld.id = "edudiv" + data['Id']
+
+                                    ld.appendChild(ll)
+                                    ed.appendChild(ld)
+                                }
+                            }
+                            else if (data['CMD'] === 'Update') {
+                                console.log("got update education");
+                                console.log(data);
+                                var edudiv = document.getElementById("Tertiary")
+                                var inistid = "minst" + data['Id']
+                                var inst = document.getElementById(inistid)
+
+                                if (inst && edudiv) {
+                                    console.log("got inst to update");
+                                    console.log(inst);
+                                    inst.innerText = data['Institution']
+                                    myeducation.push(data)
+                                }
+                                else {
+                                    console.log("did not get node to update");
+                                    console.log(inst);
+                                    console.log(edudiv);
+
+                                }
+                            }
+                            else if (data['CMD'] === 'Delete') {
+                                console.log("got delete");
+                                //get div and remove div
+                                //rem to remove edit nodes
+                                var mid = "edudiv" + data['Id']
+                                var mdi = document.getElementById(mid)
+                                var edudiv = document.getElementById("Tertiary")
+
+                                if (edudiv && mdi) {
+                                    console.log("got node to delete");
+                                    console.log(mdi);
+                                    console.log(edudiv);
+                                    edudiv.removeChild(mdi)
+                                    //update records
+                                } else {
+                                    console.log("did not get node to delete");
+                                    console.log(mdi);
+                                    console.log(edudiv);
+                                }
+                            }
+                            else {
+                                console.log("unkown data type");
+                            }
+                        }
+                    }
+                    else if (data['Type'] === 'Medical') {
+                        console.log("got medical");
+                        if (data['CMD'] === 'Create') {
+                            console.log("got create");
+                            console.log("got medical create");
+                            console.log(data['Desc']);
+                            console.log(mymedical)
+
+                            var t = document.createElement('label')
+                            t.className = "col-lg-1 col-md-1 col-sm-11 1";
+                            t.style = "margin:auto;height:fit-content;margin-bottom:3px";
+                            t.innerText = data['Name']
+                            t.id = "medname" + data['Id']
+
+                            var d = document.createElement('div')
+                            d.className = "row ";
+                            d.style = "width:90%;margin:auto";
+                            d.id = "meddiv" + data['Id']
+
+                            var p = document.createElement('p')
+                            p.className = "col-lg-1 col-md-1 col-sm-11 1 ";
+                            p.style = "margin:auto;height:fit-content;margin-bottom:3px";
+                            p.id = "meddesc" + data['Id']
+
+                            if (data['Desc']) {
+                                p.innerText = data['Desc']
+                            }
+                            else {
+                                p.innerText = "No description"
+                            }
+                            var dp = document.getElementById(data['Kind'])
+                            console.log(dp);
+                            if (dp && ee) {
+                                console.log("appending med nodes");
+                                d.appendChild(t)
+                                d.appendChild(p)
+                                dp.appendChild(d)
+                                console.log("appending med nodes");
+                            }
+                            else {
+                                console.log("did not append med nodes");
+                            }
+                        }
+                        else if (data['CMD'] === 'Update') {
+                            console.log("got update");
+                            //get div and change name nd desc
+                            ////main nodes
+                            var dp = document.getElementById(data['Kind'])
+
+                            var pd = "meddiv" + data['Id']
+                            var pe = document.getElementById(pd)
+
+                            if (dp && pe) {
+                                //get name and desc node
+                                console.log("updating med nodes");
+                                var nameid = "medname" + data['Id'];
+                                var decid = "meddesc" + data['Id']
+
+                                var nam = document.getElementById(nameid)
+                                var dec = document.getElementById(decid)
+
+                                if (nam && dec) {
+                                    nam.innerText = data['Name']
+                                    dec.innerText = data['Desc']
+                                    //update med record
+                                    enam.value = data['Name']
+                                    edec.value = data['Desc']
+                                }
+                                else {
+                                    console.log("did not update med edit nodes");
+                                }
+                            }
+                            else {
+                                console.log("did not get main nodes");
+                                console.log(dp);
+                                console.log(pe);
+                            }
+                        }
+                        else if (data['CMD'] === 'Delete') {
+                            console.log("got medi delete");
+                            var dp = document.getElementById(data['Kind'])
+
+                            var pd = "meddiv" + data['Id']
+                            var pe = document.getElementById(pd)
+
+                            if (dp && pe) {
+                                //get name and desc node
+                                dp.removeChild(pe)
+                            }
+                            else {
+                                console.log("did not get main nodes");
+                                console.log(pe);
+                                console.log(dp);
+                            }
+                        }
+                        else {
+                            console.log("cmd unknown");
+                        }
+                    }
+                    else if (data['Type'] === 'Emergency') {
+                        ///create fields
+                        console.log('got emergency');
+                        //create main div and add data
+                        myemergency.push(data)
+                        var c = data['Type']
+                        var ediv = document.getElementById(c)
+                        console.log(ediv);
+
+                        if (ediv) {
+                            if (data['Index'] === 1) {
+                                console.log("got index 1")
+                                for (var i = 0; i < data['keys'].length; i++) {
+                                    var u = data['keys']
+                                    var f = u[i]
+                                    var o = f + "1"
+                                    console.log(o);
+                                    var y = document.getElementById(o)
+                                    var di = document.getElementById('firstemer')
+                                    if (y && di) {
+                                        console.log(y);
+                                        console.log(di);
+                                        y.innerText = data[f]
+                                    }
+                                }
+                            }
+                            if (data['Index'] === 2) {
+                                console.log("got index 2")
+                                for (var i = 0; i < data['keys'].length; i++) {
+                                    var u = data['keys']
+                                    var f = u[i]
+                                    var o = f + "2"
+                                    var y = document.getElementById(o)
+                                    var di = document.getElementById('secondemer')
+                                    if (y && di) {
+                                        console.log(y);
+                                        console.log(di);
+                                        y.innerText = data[f]
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    else {
+                        console.log("got update data but dont know what to do with it");
+                    }
+                }
+            })
+        </script>
+        <div class="row mb-2 g-2 p-2" id="Emergency" style="width:100%;margin:auto">
+            <p class="col-lg-11 col-md-11 col-sm-11 col-11  mb-2 g-2 p-2 " style="text-align: center;">Emergency</p>
+            <div class="row mb-2 g-2 p-2" id="firstemer" style="width:90%;margin:auto">
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Name</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="name1" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone
+                    Number</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="phone1" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone
+                    Number</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="contact1" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Role</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="role1" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Member</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="member1" style="margin:auto;height:fit-content"></label>
+            </div>
+            <div class="row mb-2 g-2 p-2" id="secondemer" style="width:90%;margin:auto">
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Name</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="name2" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone
+                    Number</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="phone2" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Phone
+                    Number</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="contact2" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light   "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Role</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="role2" style="margin:auto;height:fit-content"></label>
+                <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 border bg-light  "
+                    style="margin:auto;height:fit-content;margin-bottom:3px;overflow: hidden;">Member</label>
+                <label for="" class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 border bg-light" id="member2" style="margin:auto;height:fit-content"></label>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

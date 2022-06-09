@@ -1,0 +1,2518 @@
+<html>
+
+<head>
+    <title>Saved</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+    <script>
+        sio = io.connect((namespace = "/myprofile"));
+    </script>
+</head>
+
+<body class="container-fluid g-0 p-0" onload="bodyload({{udata}})" style="
+      height: 750px;
+      margin: auto;
+      width: 100%;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.8);
+    ">
+    <script>
+        var myeducation = [];
+        var mymedical = [];
+        var mypersonal;
+        var myemergency = [];
+        var myaccount = [];
+
+        function bodyload(udata) {
+            console.log("got udata");
+            console.log(udata);
+            console.log(udata["Id"]);
+            //emit this id
+
+            document.getElementById("mydp").src = udata["DP"];
+            sio.emit("userprofile", udata["Id"]);
+        }
+
+        var dtas;
+
+        function getVal() {
+            //get lists and cycle through the answers
+            if (
+                myaccount &&
+                myeducation &&
+                myemergency &&
+                mymedical &&
+                mypersonal
+            ) {
+                //for loop all
+                console.log(myaccount);
+                console.log(mymedical);
+                console.log(myeducation);
+                console.log(myemergency);
+                console.log(mypersonal);
+                dt = {
+                    Update: [
+                        mymedical,
+                        mypersonal,
+                        myeducation,
+                        myemergency,
+                        myaccount,
+                    ],
+                };
+
+                for (var i = 0; i < myaccount["keys"].length; i++) {
+                    console.log(myaccount.keys[i]);
+                    var tt = "e" + myaccount.keys[i];
+                    console.log(tt);
+
+                    var td = document.getElementById(tt);
+                    if (td) {
+                        console.log("getting account value");
+                        console.log(td);
+                        console.log(td.value);
+                        myaccount[myaccount.keys[i]] = td.value;
+                    }
+                }
+                if (myaccount["password"] !== "") {
+                    //get account data
+                    console.log("in account");
+                    console.log("got account data");
+                    console.log(myaccount);
+                } else {
+                    console.log("not in account");
+                    var tn = document.getElementById("epassword");
+                    console.log(tn.value);
+                    console.log(myaccount);
+                }
+                //emit this
+                for (var i = 0; i < mypersonal["keys"].length; i++) {
+                    console.log("in personal");
+                    var f = mypersonal["keys"][i];
+                    console.log("got personal");
+                    var t = "e" + f;
+                    var tn = document.getElementById(t);
+                    if (tn) {
+                        console.log(tn);
+                        mypersonal[f] = tn.value;
+                        console.log(tn.value);
+                    }
+                }
+                for (var m = 0; m < mymedical.length; m++) {
+                    console.log("in medical");
+                    var mm = mymedical[m];
+                    console.log("got medical tag");
+                    console.log(mm);
+
+                    var me = "emedname" + mm["Id"];
+                    var md = "emeddesc" + mm["Id"];
+
+                    var mediv = document.getElementById(me);
+                    var mddiv = document.getElementById(md);
+
+                    if (mediv && mddiv) {
+                        console.log("got medical nodes");
+                        console.log(mediv);
+                        console.log(mddiv);
+                        console.log(mm["Name"]);
+                        console.log(mm["Desc"]);
+
+                        mm["Name"] = mediv.value;
+                        mm["Desc"] = mddiv.value;
+                        ///check if created and delete
+                        if (mm["CMD"] === "Create") {
+                            console.log("got created deletiing");
+                            //get id and Kind
+                            var kid = "e" + mm["Kind"];
+                            var did = "emeddiv" + mm["Id"];
+
+                            var mk = document.getElementById(kid);
+                            var md = document.getElementById(did);
+
+                            if (mk && md) {
+                                console.log("got both divs");
+                                console.log(mk);
+                                console.log(md);
+                                mk.removeChild(md);
+                            }
+                        }
+                    } else {
+                        console.log("did not find nodeeeeee remove from here");
+                        if (mm["CMD"] === "Update") {
+                            mm["CMD"] = "Delete";
+                        } else {
+                            mm["CMD"] = "Ignore";
+                        }
+                    }
+                }
+                for (var m = 0; m < myeducation.length; m++) {
+                    console.log("in education");
+                    var mm = myeducation[m];
+                    console.log("got edu tag");
+                    console.log(mm);
+                    if (mm["Level"] === "Tertiary") {
+                        console.log("got tertiary");
+                        var idf = "inst" + mm["Id"];
+                        var mediv = document.getElementById(idf);
+                        console.log(mediv);
+                        if (mediv) {
+                            console.log(mediv.value);
+                            mm["Institution"] = mediv.value;
+                            ///check if created and delete
+                            if (mm["CMD"] === "Create") {
+                                console.log("got created deletiing");
+                                //get id and Kind
+                                var kid = "e" + mm["Level"];
+                                var did = "edu" + mm["Id"];
+
+                                var mk = document.getElementById("eTertiary");
+                                var md = document.getElementById(did);
+
+                                if (mk && md) {
+                                    console.log("got both divs");
+                                    console.log(mk);
+                                    console.log(md);
+                                    mk.removeChild(md);
+                                }
+                            }
+                        } else {
+                            console.log("did not find nodeeeeee remove from here");
+                            //change type to ignore
+                            if (mm["CMD"] === "Update") {
+                                mm["CMD"] = "Delete";
+                            } else {
+                                mm["CMD"] = "Ignore";
+                            }
+                        }
+                    } else {
+                        var me = "e" + mm["Level"];
+                        var mediv = document.getElementById(me);
+                        console.log(mediv);
+                        if (mediv) {
+                            console.log(mediv.value);
+                            mm["Institution"] = mediv.value;
+                            ///check if created and delete
+                        } else {
+                            console.log("did not find nodeeeeee remove from here");
+                            //change type to ignore
+                            mm["CMD"] = "Ignore";
+                        }
+                    }
+                }
+                var ekeys = ["name", "phone", "contact", "role", "member"];
+
+                for (var c = 0; c < myemergency.length; c++) {
+                    console.log("in emergency");
+                    // c=c+1;
+                    var t = c + 1;
+                    var cc = myemergency[c];
+                    console.log(cc);
+                    for (var k = 0; k < ekeys.length; k++) {
+                        console.log(ekeys[k]);
+                        //get"e"+ekeys[k]+c
+                        var ke = "e" + ekeys[k] + t;
+                        console.log(ke);
+                        var tdd = document.getElementById(ke);
+                        console.log(tdd);
+                        if (tdd) {
+                            console.log(tdd.value);
+                            var sd = ekeys[k];
+                            console.log(sd);
+                            console.log(cc[sd]);
+                            cc[sd] = tdd.value;
+                        }
+                    }
+                    // c=c-1;
+                }
+            }
+
+            data = {
+                Education: myeducation,
+                Account: myaccount,
+                Emergency: myemergency,
+                Personal: mypersonal,
+                Medical: mymedical,
+            };
+            sio.emit("editprofile", data);
+            dtas = data;
+            myaccount = [];
+            myeducation = [];
+            myeducation = [];
+            myemergency = [];
+            mypersonal = [];
+            console.log("gonna emit this data here");
+        }
+
+        function adddedu() {
+            //create input and label add to edu div
+
+            var ed = document.getElementById("eTertiary");
+            if (ed) {
+                console.log("got edu div");
+                var nid = Math.round(Math.random() * 100000);
+
+                var l = document.createElement("label");
+                l.className = "col-lg-6 col-md-6 col-sm-11 border ";
+                l.style = "margin: auto;";
+                l.innerText = "Other";
+
+                var ll = document.createElement("input");
+                ll.type = "text";
+                ll.style = "widith:100%;margin:auto;";
+                ll.id = "inst" + nid;
+                ll.value = "";
+                ll.className =
+                    "col-lg-11 col-md-11 col-sm-11 col-11 form-control ml-0";
+
+                var ld = document.createElement("div");
+                ld.className = "row mt-1 ";
+                ld.style = "width:100%;margin:auto";
+
+                t = "edu" + nid;
+                ld.id = t;
+
+                var bl = document.createElement("button");
+                bl.className = "g-0 p-0 mt-0 mr-0 form-control col-1";
+                bl.style =
+                    "margin:auto;width:26px;border-radius:13px;height:26px;align-content:center;justify-content:center";
+                bl.innerText = "x";
+                bl.id = nid;
+                bl.addEventListener("click", function(e) {
+                    yr = e.target;
+                    console.log(e);
+                    console.log("clicked delete");
+                    t = "edu" + yr.id;
+                    console.log(t);
+                    console.log(yr.id);
+                    console.log(e.target);
+                    deledu(t);
+                });
+
+                //ld.appendChild(l)
+                ld.appendChild(ll);
+                ld.appendChild(bl);
+                //add to list
+
+                if (myeducation) {
+                    //var nid = "edu" + Math.round(Math.random() * 100000)
+                    var da = {
+                        Level: "Tertiary",
+                        Id: nid,
+                        Institution: "",
+                        CMD: "Create",
+                        Type: "Education",
+                    };
+                    ed.appendChild(ld);
+                    myeducation.push(da);
+                }
+            }
+        }
+
+        function addmed(id) {
+            //create input and label add to edu div
+            //add to list
+            var knd = "e" + id;
+            console.log(knd);
+            var ed = document.getElementById("mymed");
+            var sd = document.getElementById(knd);
+            if (ed && sd) {
+                console.log("got med div");
+                console.log(sd);
+
+                var nid = Math.round(Math.random() * 100000);
+
+                var l = document.createElement("input");
+                l.className = "col-lg-4 col-md-4 col-sm-4 form-control mt-0 g-0 p-0";
+                l.style = "margin: auto;";
+                l.id = "emedname" + nid;
+                l.value = "";
+
+                var ll = document.createElement("textarea");
+                ll.style = "margin:auto;height:fit-content;";
+                ll.id = "emeddesc" + nid;
+                ll.value = "";
+                ll.className =
+                    "col-lg-6 col-md-6 col-sm-6  mt-0 form-control g-0 p-0";
+
+                var ld = document.createElement("div");
+                ld.className = "row g-0 p-0 mt-1 ";
+                ld.style = "width:100%;margin:auto";
+                var t = "emeddiv" + nid;
+                ld.id = t;
+
+                var bl = document.createElement("button");
+                bl.className =
+                    "g-0 p-0 mt-0 mr-0 form-control col-lg-1 col-md-1 col-sm-1 col-2";
+                bl.style =
+                    "margin:auto;width:26px;border-radius:13px;height:26px;align-content:center;justify-content:center;font-size:10px";
+                bl.innerText = "remove";
+                bl.id = nid;
+                bl.addEventListener("click", function(e) {
+                    console.log("clicked delete");
+                    yr = e.target.id;
+                    t = "emeddiv" + yr;
+                    delmed(knd, t);
+                });
+
+                ld.appendChild(l);
+                ld.appendChild(ll);
+                ld.appendChild(bl);
+                if (mymedical) {
+                    console.log("got med list");
+
+                    var da = {
+                        Id: nid,
+                        Kind: id,
+                        Name: "",
+                        Desc: "",
+                        Type: "Medical",
+                        CMD: "Create",
+                    };
+                    sd.appendChild(ld);
+                    mymedical.push(da);
+                    console.log("med appended");
+                }
+            }
+        }
+
+        function delmed(type, id) {
+            console.log("got delete");
+            console.log(type);
+            console.log(id);
+            //get node div and mark as removed
+            console.log("got remove medical");
+            //get id node
+            var dn = document.getElementById(type);
+            var idn = document.getElementById(id);
+            if (idn && dn) {
+                console.log("got node to remove");
+                console.log(idn);
+                //activate node removed text
+                //mark as delete
+                dn.removeChild(idn);
+            } else {
+                console.log("did not get nodes to remove");
+                console.log(idn);
+                console.log(dn);
+            }
+        }
+
+        function deledu(id) {
+            console.log("got remove education");
+            //get id node
+            console.log(id);
+
+            var dn = document.getElementById("eTertiary");
+            var idn = document.getElementById(id);
+            console.log(dn);
+            console.log(idn);
+            if (idn && dn) {
+                console.log("got node to remove");
+                console.log(idn);
+                dn.removeChild(idn);
+                //activate node removed text
+                //mark as delete
+            }
+        }
+    </script>
+    {% if udata %}
+    <div class="row mb-2 g-0 p-1" style="width: 100%; margin: auto">
+        <img id="mydp" class="border" height="300px" width="300px" style="margin: auto; border-radius: 150px; margin-bottom: 10px" src="" />
+        <input class="col-3 col-md-3 col-sm-3 col-lg-3 border form-control" style="float: right" type="file" id="emydp" onchange="cover()" />
+        <span class="col-12"></span>
+        <a onclick="showal('profile')" id="mybtn" class="form-control mb-2 mr-2" style="width: max-content; margin: auto; display: none">Edit Profile</a
+      >
+      <span class="col-12"></span>
+      <a
+        onclick="showal('email')"
+        id="mybtn1"
+        class="mb-2 form-control mr-2"
+        style="width: max-content; margin: auto"
+        >Change Email</a
+      >
+      <span class="col-12"></span>
+      <a
+        onclick="showal('password')"
+        id="mybtn2"
+        class="mb-2 form-control mr-2"
+        style="width: max-content; margin: auto"
+        >Change Password</a
+      >
+    </div>
+    <script>
+      function cover() {
+        console.log("changing cover");
+
+        var f = document.getElementById("emydp");
+        console.log(f.files);
+        var dip = document.getElementById("mydp");
+        //console.log(pp);
+        //check if file is image
+        if (f && f.files.length > 0) {
+          console.log("got files");
+          var fi = f.files.item(0);
+          console.log(fi);
+          if (fi) {
+            console.log("got files");
+            var t = fi.type;
+            console.log(t);
+            var yt = t.search("/");
+            console.log(yt);
+            var tt = t.slice(0, yt);
+            console.log(tt);
+            var n = fi.name;
+            if (tt === "image") {
+              console.log("got image");
+              var nr = new FileReader();
+              nr.readAsDataURL(fi);
+              nr.onload = function (y) {
+                var dr = y.target.result;
+                console.log("got target.result");
+                console.log(dip);
+                dip.src = dr;
+                //sio.emit
+                data = {
+                  //"Id": id,
+                  File: fi,
+                  Type: fi.type,
+                  Name: n,
+                  Id: myaccount["Id"],
+                };
+                console.log(data);
+                sio.emit("changepic", data);
+                console.log(fi.type);
+                console.log("emited");
+              };
+            }
+          }
+        }
+      }
+    </script>
+    <div
+      class="row form-group mb-2 g-0 p-1"
+      id="dets"
+      style="width: 100%; margin: auto"
+    >
+      <div
+        class="row mb-2 g-0 p-0 border border"
+        style="width: 100%; margin: auto"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1"
+          style="text-align: center"
+        >
+          Account Details
+        </p>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 form-label"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Email</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1form-data"
+            id="email"
+            style="
+              margin: auto;
+              height: fit-content;
+              overflow: hidden;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+            >{{udata["email"]}}</label
+          >
+        </div>
+
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 form-label"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Level</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="level"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Status</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="status"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+            >Active</label
+          >
+        </div>
+
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 form-label"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Description</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="desc"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+      </div>
+      <div class="row mb-2 g-0 p-1 border" style="width: 100%; margin: auto">
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11"
+          style="text-align: center"
+        >
+          Personal
+        </p>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >First Name</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="fname"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+            >{{udata["fname"]}}</label
+          >
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Second Name</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="sname"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Third Name</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="tname"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Marital</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="mstatus"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+            >{{udata["fname"]}}</label
+          >
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Sex</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="sex"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Occupation</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="occupation"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Phone</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="fcontact"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >Phone</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="scontact"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+            "
+          ></label>
+        </div>
+        <div
+          class="row g-0 p-0 border mb-1 m-auto"
+          style="width: 100%; height: max-content"
+        >
+          <label
+            for=""
+            class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+            style="
+              margin: auto;
+              height: fit-content;
+              font-size: 14px;
+              margin-bottom: 3px;
+              overflow: hidden;
+            "
+            >D.O.B</label
+          >
+          <label
+            for=""
+            class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+            id="dob"
+            style="margin: auto; height: fit-content; width: 100%"
+          ></label>
+        </div>
+      </div>
+      <div
+        class="row mb-2 g-0 p-1 border"
+        style="width: 100%; margin: auto; display: none"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center"
+        >
+          Medical
+        </p>
+        <div class="row" id="Allergy" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: left"
+          >
+            Allergies
+          </p>
+        </div>
+        <div class="row" id="Disability" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: left"
+          >
+            Disability
+          </p>
+        </div>
+        <div class="row" id="Chronic" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: left"
+          >
+            Chronic
+          </p>
+        </div>
+      </div>
+      <div
+        class="row mb-2 g-0 p-1 border"
+        style="width: 100%; margin: auto; display: none"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center"
+        >
+          Education
+        </p>
+
+        <label
+          for=""
+          class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+          style="
+            margin: auto;
+            height: fit-content;
+            font-size: 14px;
+            margin-bottom: 3px;
+            overflow: hidden;
+          "
+          >Primary School</label
+        >
+        <label
+          for=""
+          class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+          id="Primary"
+          style="
+            margin: auto;
+            height: fit-content;
+            font-size: 14px;
+            margin-bottom: 3px;
+          "
+          >{{udata["fname"]}}</label
+        >
+        <label
+          for=""
+          class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+          style="
+            margin: auto;
+            height: fit-content;
+            font-size: 14px;
+            margin-bottom: 3px;
+            overflow: hidden;
+          "
+          >High School</label
+        >
+        <label
+          for=""
+          class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+          id="Secondary"
+          style="
+            margin: auto;
+            height: fit-content;
+            font-size: 14px;
+            margin-bottom: 3px;
+          "
+        ></label>
+        <label
+          for=""
+          class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 ml-0mt-0"
+          style="
+            height: fit-content;
+            margin: auto;
+            font-size: 14px;
+            margin-bottom: auto;
+          "
+          >Tertiary</label
+        >
+        <div
+          for=""
+          class="col-7 g-0 p-0"
+          id="Tertiary"
+          style="margin: auto; height: fit-content; width: 100%"
+        ></div>
+      </div>
+      <script>
+        sio.on("updatedata", function (data) {
+          console.log("got update data");
+          console.log(data);
+          if (data) {
+            //check category
+            if (data["Type"] === "Account") {
+              ///update fields
+              console.log("got account");
+              var y = data["keys"];
+              for (var r = 0; r < y.length; r++) {
+                console.log(y[r]);
+                var n = y[r];
+                var nd = document.getElementById(n);
+                var ne = "e" + n;
+                var nde = document.getElementById(ne);
+                if (nd) {
+                  console.log("got main node");
+                  console.log(nd);
+                  //update value
+                  nd.innerText = data[n];
+                }
+                if (nde) {
+                  //update value
+                  console.log("got edit node");
+                  //console.log(nde);
+                  //console.log('got edit node');
+                  nde.value = data[n];
+                  //nde.addEventListener('onchange', getVal(ne, 'Personal', 'no key'))
+                  //console.log('after getval');
+                }
+              }
+              myaccount = data;
+            } else if (data["Type"] === "Personal") {
+              ///update fields
+              console.log("got personal");
+              //get fields and update innertext and value for edit div
+              var y = data["keys"];
+              for (var r = 0; r < y.length; r++) {
+                console.log(y[r]);
+                var n = y[r];
+                var nd = document.getElementById(n);
+                var ne = "e" + n;
+                var nde = document.getElementById(ne);
+                if (nd) {
+                  console.log("got main node");
+                  console.log(nd);
+                  //update value
+                  nd.innerText = data[n];
+                }
+                if (nde) {
+                  //update value
+                  console.log("got edit node");
+                  //console.log(nde);
+                  //console.log('got edit node');
+                  nde.value = data[n];
+                  //nde.addEventListener('onchange', getVal(ne, 'Personal', 'no key'))
+                  //console.log('after getval');
+                }
+              }
+              mypersonal = data;
+            } else if (data["Type"] === "Education") {
+              ///update fields first three fields then create
+              console.log("got education");
+              if (
+                data["Level"] === "Primary" ||
+                data["Level"] === "Secondary" ||
+                data["Level"] === "Tertiary"
+              ) {
+                //get field and update innertext and value for edit div
+                console.log("got listed");
+                var n = data["Level"];
+                var nd = document.getElementById(n);
+                var ne = "e" + data["Level"];
+                console.log(ne);
+                data["CMD"] = "Update";
+
+                var nde = document.getElementById(ne);
+                myeducation.push(data);
+                if (nd) {
+                  //update value
+                  console.log("got main node");
+                  console.log(nd);
+                  nd.innerText = data["Institution"];
+                }
+                if (nde) {
+                  //update value
+                  console.log("got edit node");
+                  console.log(nde);
+                  nde.value = data["Institution"];
+                }
+              }
+            } else if (data["Type"] === "Medical") {
+              ///create fields
+              //create node in others
+              //create label/input(inst,level)
+              //////
+              /////get id,kind
+
+              console.log("got medical");
+              if (data["CMD"] === "Create") {
+                console.log("got create");
+                console.log("got medical create");
+                console.log(data["Desc"]);
+
+                console.log(mymedical);
+
+                var t = document.createElement("label");
+                t.className = "col-lg-1 col-md-1 col-sm-11 1";
+                t.style = "margin:auto;height:fit-content;margin-bottom:3px";
+                t.innerText = data["Name"];
+                t.id = "medname" + data["Id"];
+
+                var d = document.createElement("div");
+                d.className = "row ";
+                d.style = "width:100%;margin:auto";
+                d.id = "meddiv" + data["Id"];
+
+                var p = document.createElement("p");
+                p.className = "col-lg-1 col-md-1 col-sm-11 1 ";
+                p.style = "margin:auto;height:fit-content;margin-bottom:3px";
+                p.id = "meddesc" + data["Id"];
+
+                if (data["Desc"]) {
+                  p.innerText = data["Desc"];
+                } else {
+                  p.innerText = "No description";
+                }
+
+                var dp = document.getElementById(data["Kind"]);
+                var edp = "e" + data["Kind"];
+                var ee = document.getElementById(edp);
+                console.log(dp);
+                if (dp && ee) {
+                  console.log("appending med nodes");
+                  d.appendChild(t);
+                  d.appendChild(p);
+                  dp.appendChild(d);
+                  console.log("appending med nodes");
+                } else {
+                  console.log("did not append med nodes");
+                }
+                if (ee) {
+                  console.log("creating edit nodes");
+                  var ii = document.createElement("textarea");
+                  ii.className = "col-lg-7 col-md-7 col-sm-7 mt-0 form-control";
+                  ii.style = "margin:auto;height:fit-content;";
+                  ii.value = data["Desc"];
+                  ii.id = "emeddesc" + data["Id"];
+
+                  var dw = document.createElement("div");
+                  dw.className = "row ";
+                  dw.style = "width:100%;margin:auto";
+                  dw.id = "emeddiv" + data["Id"];
+
+                  var tw = document.createElement("input");
+                  tw.className =
+                    "col-lg-4 col-md-4 col-sm-4 mt-0   form-control";
+                  tw.style = "margin:auto;height:fit-content;";
+                  tw.value = data["Name"];
+                  tw.id = "emedname" + data["Id"];
+
+                  var bl = document.createElement("button");
+                  bl.className = "col-lg-1 col-md-1 col-sm-1   form-control";
+                  bl.style = "margin:auto;height:fit-content;";
+                  bl.innerText = "x";
+                  bl.id = data["Id"];
+
+                  bl.addEventListener("click", function (e) {
+                    console.log("clicked delete");
+                    yr = e.target.id;
+                    t = "emeddiv" + yr;
+                    var knd = "e" + data["Kind"];
+                    console.log(knd);
+                    delmed(knd, t);
+                  });
+
+                  dw.appendChild(tw);
+                  dw.appendChild(ii);
+                  dw.appendChild(bl);
+                  ee.appendChild(dw);
+                  data["CMD"] = "Update";
+                  mymedical.push(data);
+                  console.log("data pushed to medical and appended");
+                } else {
+                  console.log("did not append med edit nodes");
+                }
+              } else if (data["CMD"] === "Update") {
+                console.log("got update");
+                //get div and change name nd desc
+                ////main nodes
+                var dp = document.getElementById(data["Kind"]);
+
+                var pd = "meddiv" + data["Id"];
+                var pe = document.getElementById(pd);
+
+                //edit node
+                var edp = "e" + data["Kind"];
+                var ee = document.getElementById(edp);
+
+                var epd = "emeddiv" + data["Id"];
+                var en = document.getElementById(epd);
+                if (ee && en && dp && pe) {
+                  //get name and desc node
+                  console.log("updating med nodes");
+                  var nameid = "medname" + data["Id"];
+                  var decid = "meddesc" + data["Id"];
+
+                  var enameid = "emedname" + data["Id"];
+                  var edecid = "emeddesc" + data["Id"];
+
+                  var nam = document.getElementById(nameid);
+                  var dec = document.getElementById(decid);
+
+                  var enam = document.getElementById(enameid);
+                  var edec = document.getElementById(edecid);
+
+                  if (nam && dec && enam && edec) {
+                    nam.innerText = data["Name"];
+                    dec.innerText = data["Desc"];
+                    //update med record
+                    enam.value = data["Name"];
+                    edec.value = data["Desc"];
+                  } else {
+                    console.log("did not update med edit nodes");
+                  }
+                } else {
+                  console.log("did not get main nodes");
+                  console.log(ee);
+                  console.log(en);
+                  console.log(dp);
+                  console.log(pe);
+                }
+              } else if (data["CMD"] === "Delete") {
+                console.log("got medi delete");
+                var dp = document.getElementById(data["Kind"]);
+
+                var pd = "meddiv" + data["Id"];
+                var pe = document.getElementById(pd);
+
+                //edit node
+                var edp = "e" + data["Kind"];
+                var ee = document.getElementById(edp);
+
+                var epd = "emeddiv" + data["Id"];
+                var en = document.getElementById(epd);
+                if (dp && pe) {
+                  //get name and desc node
+                  dp.removeChild(pe);
+                } else {
+                  console.log("did not get main nodes");
+
+                  console.log(en);
+                  console.log(dp);
+                }
+              } else {
+                console.log("cmd unknown");
+              }
+            } else if (data["Type"] === "Emergency") {
+              ///create fields
+              console.log("got emergency");
+              //create main div and add data
+              myemergency.push(data);
+              var c = data["Type"];
+              var ediv = document.getElementById(c);
+              console.log(ediv);
+
+              if (ediv) {
+                if (data["Index"] === 1) {
+                  console.log("got index 1");
+                  for (var i = 0; i < data["keys"].length; i++) {
+                    var u = data["keys"];
+                    var f = u[i];
+                    var o = f + "1";
+                    console.log(o);
+                    var y = document.getElementById(o);
+                    var di = document.getElementById("firstemer");
+                    var oe = "e" + f + "1";
+                    var ey = document.getElementById(oe);
+                    var edi = document.getElementById("efirstemer");
+                    if (y && di) {
+                      console.log(y);
+                      console.log(di);
+                      y.innerText = data[f];
+                    }
+                    if (ey && edi) {
+                      console.log("got edit node");
+                      console.log(ey);
+                      ey.value = data[f];
+                    }
+                  }
+                }
+                if (data["Index"] === 2) {
+                  console.log("got index 2");
+                  for (var i = 0; i < data["keys"].length; i++) {
+                    var u = data["keys"];
+                    var f = u[i];
+                    var o = f + "2";
+                    var y = document.getElementById(o);
+                    var di = document.getElementById("secondemer");
+                    if (y && di) {
+                      console.log(y);
+                      console.log(di);
+                      y.innerText = data[f];
+                    }
+                    var oe = "e" + f + "2";
+                    var ey = document.getElementById(oe);
+                    var edi = document.getElementById("esecondemer");
+                    if (ey && edi) {
+                      console.log("got edit node");
+                      console.log(ey);
+                      ey.value = data[f];
+                    }
+                  }
+                }
+              }
+            } else {
+              console.log("got update data but dont know what to do with it");
+            }
+          }
+        });
+
+        function addin(sos, id) {
+          //from medical and education
+          //get src btn
+          //get src div
+          //add to src div
+          //update onclick btn event
+          var la = document.createElement("label");
+          la.className = "col-lg-6 col-md-6 col-sm-11 border ";
+          al.style = "margin: auto;";
+
+          var ii = document.createElement("input");
+          ii.type = "text";
+          ii.style = "margin:5px;";
+          ii.ii.className = "col-8  form-control";
+
+          if (sos === "Education") {
+            var mbt = document.getElementById("edubtn");
+            var mdiv = document.getElementById("edudiv");
+            if (mdiv) {
+              //append label and input here
+              ii.id = "myedu" + id;
+              myeducation.push(ii.id);
+              console.log(my);
+              mdiv.appendChild();
+              mdiv.appendChild();
+              if (mbt) {
+                var d = id + 1;
+                console.log(d);
+                mbt.addEventListener("onclick", function () {
+                  addin("Education", d);
+                });
+              }
+            }
+          }
+          if (sos === "Allagies") {
+            var mbt = document.getElementById("allebtn");
+            var mdiv = document.getElementById("allediv");
+            if (mdiv) {
+              //append label and input here
+              ii.id = "mymed" + id;
+              mymedical.push(ii.id);
+              console.log(my);
+              mdiv.appendChild();
+              mdiv.appendChild();
+              if (mbt) {
+                var d = id + 1;
+                console.log(d);
+                mbt.addEventListener("onclick", function () {
+                  addin("Allagies", d);
+                });
+              }
+            }
+          }
+          if (sos === "Disabilities") {
+            var mbt = document.getElementById("disabtn");
+            var mdiv = document.getElementById("disadiv");
+            if (mdiv) {
+              //append label and input here
+              ii.id = "mymed" + id;
+              mymedical.push(ii.id);
+              console.log(my);
+              mdiv.appendChild();
+              mdiv.appendChild();
+              if (mbt) {
+                var d = id + 1;
+                console.log(d);
+                mbt.addEventListener("onclick", function () {
+                  addin("Disabilities", d);
+                });
+              }
+            }
+          }
+          if (sos === "Chronic") {
+            var mbt = document.getElementById("chrobtn");
+            var mdiv = document.getElementById("chrodiv");
+            if (mdiv) {
+              //append label and input here
+              ii.id = "mymed" + id;
+              mymedical.push(ii.id);
+              console.log(my);
+              mdiv.appendChild();
+              mdiv.appendChild();
+              if (mbt) {
+                var d = id + 1;
+                console.log(d);
+                mbt.addEventListener("onclick", function () {
+                  addin("Chronic", d);
+                });
+              }
+            }
+          }
+          if (sos === "Others") {
+            var mbt = document.getElementById("othebtn");
+            var mbt = document.getElementById("othediv");
+            if (mdiv) {
+              //append label and input here
+              ii.id = "mymed" + id;
+              mymedical.push(ii.id);
+              console.log(my);
+              mdiv.appendChild();
+              mdiv.appendChild();
+              if (mbt) {
+                var d = id + 1;
+                console.log(d);
+                mbt.addEventListener("onclick", function () {
+                  addin("Others", d);
+                });
+              }
+            }
+          }
+        }
+
+        function onsub() {
+          //check if password is given
+          if (myaccount["passwd"] !== "") {
+            //format data or just emit as is
+          }
+        }
+
+        function removeV(id, dict, div) {
+          var mdv = document.getElementById(div);
+          if (id && dict && mdv) {
+            var m = id;
+            var d = document.getElementById(m);
+            if (d) {
+              //set dictionary value
+              mdv.removeChild(d);
+            }
+          }
+        }
+      </script>
+
+      <div
+        class="row mb-2 g-0 p-1"
+        id="Emergency"
+        style="width: 100%; margin: auto; display: none"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center"
+        >
+          Emergency
+        </p>
+        <div
+          class="row mb-2 g-0 p-1"
+          id="firstemer"
+          style="width: 100%; margin: auto"
+        >
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Name</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="name1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+              >{{udata["fname"]}}</label
+            >
+          </div>
+
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Phone Number</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="phone1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Phone Number</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="contact1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Role</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="role1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content; display: none"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Member</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="member1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+        </div>
+        <div
+          class="row mb-2 g-0 p-1"
+          id="secondemer"
+          style="width: 100%; margin: auto; display: none"
+        >
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Name</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="name2"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+              >{{udata["fname"]}}</label
+            >
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Phone Number</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="phone2"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Phone Number</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="contact2"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Role</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="role2"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+              "
+            ></label>
+          </div>
+
+          <div
+            class="row g-0 p-0 border mb-1 m-auto"
+            style="width: 100%; height: max-content"
+          >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1"
+              style="
+                margin: auto;
+                height: fit-content;
+                font-size: 14px;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Member</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1"
+              id="member2"
+              style="margin: auto; height: fit-content"
+            ></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function showal(id) {
+        var a = document.getElementById("myform");
+        var b = document.getElementById("mybtn");
+        var b1 = document.getElementById("mybtn1");
+        var b2 = document.getElementById("mybtn2");
+        var c = document.getElementById("dets");
+        var d = document.getElementById("demail");
+        var e = document.getElementById("dpass");
+        var f = document.getElementById("emydp");
+        console.log(a);
+        console.log(b);
+        console.log(c);
+        if (id === "profile") {
+          a.style.display = "flex";
+          b.style.display = "none";
+          b1.style.display = "none";
+          b2.style.display = "none";
+          c.style.display = "none";
+          d.style.display = "none";
+          e.style.display = "none";
+          f.style.display = "flex";
+        } else if (id === "email") {
+          a.style.display = "none";
+          b.style.display = "none";
+          b1.style.display = "none";
+          b2.style.display = "none";
+          c.style.display = "none";
+          d.style.display = "flex";
+          e.style.display = "none";
+          f.style.display = "none";
+        } else if (id === "password") {
+          a.style.display = "none";
+          b.style.display = "none";
+          b1.style.display = "none";
+          b2.style.display = "none";
+          c.style.display = "none";
+          d.style.display = "none";
+          e.style.display = "flex";
+          f.style.display = "none";
+        } else {
+          a.style.display = "none";
+          b.style.display = "flex";
+          b1.style.display = "flex";
+          b2.style.display = "flex";
+          c.style.display = "flex";
+          d.style.display = "none";
+          e.style.display = "none";
+          f.style.display = "flex";
+        }
+      }
+
+      function conpass() {
+        //get new password and confirm pasword ensure they are the same
+        var np = document.getElementById("newpassword");
+        var cp = document.getElementById("confirmpassword");
+
+        if (np && cp) {
+          console.log("got new pas and confirm password");
+          if (np.value === cp.value) {
+            console.log("success:::passwords match");
+            if (np.value.length < 6) {
+              console.log("password too short");
+            }
+          } else {
+            console.log("passwords do not match");
+          }
+        }
+      }
+
+      function passlen() {
+        //get new password and confirm pasword ensure they are the same
+        var np = document.getElementById("newpassword");
+        if (np) {
+          console.log("got new pas");
+
+          if (np.value.length < 6) {
+            console.log("password too short");
+          } else {
+            console.log("passwords is long enough");
+          }
+        }
+      }
+    </script>
+    <form
+      class="row form-group mb-2"
+      id="myform"
+      style="
+        height: fit-content;
+        width: 100%;
+        margin: auto;
+        display: none;
+        border-radius: 10px;
+      "
+    >
+      <div
+        class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-3"
+        style="width: 100%; margin: auto"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center; margin: auto"
+        >
+          Personal
+        </p>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="efname"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="First Name"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="esname"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Middle Name"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="etname"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Last Name"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="esex"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Sex"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="emstatus"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Marital Status"
+          />
+        </div>
+
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="efcontact"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Contact"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="escontact"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Second Contact"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="eoccupation"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Occupation"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="date"
+            style="margin: auto"
+            id="edob"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Date of birth"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="erole"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Role"
+          />
+        </div>
+      </div>
+      <div
+        class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-3"
+        style="width: 100%; margin: auto"
+        id="myedu"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center; margin: auto"
+        >
+          Education
+        </p>
+        <div class="row" style="width: 100%; margin: auto">
+          <input
+            type="text"
+            style="margin: auto"
+            id="ePrimary"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Primary school"
+          />
+        </div>
+        <div class="row" style="width: 100%; margin: auto">
+          <input
+            type="text"
+            style="margin: auto"
+            id="eSecondary"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Secondary school"
+          />
+        </div>
+
+        <div class="row" style="width: 100%; margin: auto">
+          <input
+            type="text"
+            style="margin: auto"
+            id="eTertiary"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Tertiary school"
+          />
+        </div>
+      </div>
+
+      <div
+        class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-3"
+        id="mymed"
+        style="width: 100%; margin: auto"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+          style="text-align: center; margin: auto"
+        >
+          Medical
+        </p>
+        <div class="row mb-2 mt-2" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: center"
+          >
+            Allergy
+          </p>
+          <div
+            class="row"
+            id="eAllergy"
+            style="width: 100%; margin: auto"
+          ></div>
+          <button
+            class="btn btn-primary form-control mb-0 mt-2"
+            style="margin: auto; width: max-content; height: min-content"
+            onclick="addmed('Allergy')"
+          >
+            Add record
+          </button>
+        </div>
+        <div class="row mb-2 mt-2" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: center"
+          >
+            Disability
+          </p>
+          <div
+            class="row"
+            id="eDisability"
+            style="width: 100%; margin: auto"
+          ></div>
+          <button
+            class="btn btn-primary form-control mb-0 mt-2"
+            style="margin: auto; width: max-content; height: min-content"
+            onclick="addmed('Disability')"
+          >
+            Add record
+          </button>
+        </div>
+        <div
+          class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-2"
+          style="width: 100%; margin: auto"
+        >
+          <div class="row" style="width: 100%; margin: auto">
+            <p
+              class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+              style="text-align: center"
+            >
+              Chronic
+            </p>
+            <div
+              class="row"
+              id="eChronic"
+              style="width: 100%; margin: auto"
+            ></div>
+
+            <button
+              class="btn btn-primary form-control mb-0 mt-2"
+              style="margin: auto; width: max-content; height: min-content"
+              onclick="addmed('Chronic')"
+            >
+              Add record
+            </button>
+          </div>
+        </div>
+        <div
+          class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-2"
+          style="width: 100%; margin: auto"
+        >
+          <div class="row" style="width: 100%; margin: auto">
+            <p
+              class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+              style="text-align: center"
+            >
+              Others
+            </p>
+            <div
+              class="row"
+              id="eOthers"
+              style="width: 100%; margin: auto"
+            ></div>
+
+            <button
+              class="btn btn-primary form-control mb-0 mt-2"
+              style="margin: auto; width: max-content; height: min-content"
+              onclick="addmed('Others')"
+            >
+              Add record
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-lg-6 col-md-8 col-sm-12 col-12 mb-2 mt-3"
+        id="eEmergency"
+        style="width: 100%; margin: auto"
+      >
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2"
+          style="text-align: center; margin: auto"
+        >
+          Emergency Contact
+        </p>
+        <div class="row mb-2" id="efirstemer" style="width: 100%; margin: auto">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: center"
+          >
+            Emergency Contact
+          </p>
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="ename1"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder=" Emergency Contact Names "
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="ephone1"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="First Contact"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="econtact1"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Second Contact"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="erole1"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Role"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="emember1"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="is a church member?"
+          />
+        </div>
+        <div
+          class="row mb-2 mt-2"
+          id="esecondemer"
+          style="width: 100%; margin: auto"
+        >
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: center; margin: auto"
+          >
+            Emergency Contact
+          </p>
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="ename2"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Emergency Contact Names "
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="ephone2"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="First Contact"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="econtact2"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Second Contact"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="erole2"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Role"
+          />
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="emember2"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="is a church member?"
+          />
+        </div>
+      </div>
+      <div
+        class="col-lg-6 col-md-9 col-sm-12 col-12 mb-2 mt-3 m-auto"
+        style="width: 100%; margin: auto"
+      >
+        <div class="row" style="margin: auto; width: 100%">
+          <p
+            class="col-lg-11 col-md-11 col-sm-11 col-11 mb-2 g-0 p-0"
+            style="text-align: center"
+          >
+            Account Details
+          </p>
+
+          <div class="row" style="margin: auto; width: 100%">
+            <input
+              type="text"
+              style="margin: auto"
+              id="elevel"
+              value=""
+              class="col-11 form-control border mt-1 form-input"
+              placeholder="Level"
+            />
+          </div>
+
+          <div class="row" style="margin: auto; width: 100%">
+            <input
+              type="text"
+              style="margin: auto"
+              id="edesc"
+              value=""
+              class="col-11 form-control border mt-1 form-input"
+              placeholder="Description"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-lg-6 col-md-9 col-sm-12 col-12 mb-2 mt-3 m-auto"
+        style="width: 100%; margin: auto"
+      >
+        <div class="row mb-2" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="epassword"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Password"
+          />
+        </div>
+      </div>
+      <div
+        class="row form-inline"
+        style="width: 100%; margin: auto; display: flex"
+      >
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-auto mr-1"
+          onclick="showal()"
+          style="margin: auto"
+          name="cancel"
+          value="cancel"
+        >
+          Cancel
+        </button>
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-1 mr-auto"
+          onclick="getVal()"
+          style="margin: auto"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+    {%endif%}
+    <div
+      class="form col-lg-6 col-md-9 col-sm-12 col-12 mb-4 mt-3"
+      style="width: 100%; margin: auto; display: none"
+      id="demail"
+    >
+      <div class="row" style="width: 100%; margin: auto; display: block">
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11"
+          style="text-align: right; margin: auto"
+        >
+          Change Email
+        </p>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="eemail"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Old Email"
+          />
+        </div>
+        <div class="row" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="eemail"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="New Email"
+          />
+        </div>
+        <div class="row mb-2" style="margin: auto; width: 100%">
+          <input
+            type="text"
+            style="margin: auto"
+            id="epassword"
+            value=""
+            class="col-11 form-control border mt-1 form-input"
+            placeholder="Password"
+          />
+        </div>
+      </div>
+      <div
+        class="row form-inline mb-4"
+        style="width: 100%; margin: auto; display: flex"
+      >
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-auto mr-1"
+          onclick="showal()"
+          style="margin: auto"
+          name="cancel"
+          value="cancel"
+        >
+          Cancel
+        </button>
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-1 mr-auto"
+          onclick="getVal()"
+          style="margin: auto"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="form col-lg-6 col-md-9 col-sm-12 col-12 mb-4 mt-3"
+      style="width: 100%; margin: auto; margin-bottom: 10px; display: none"
+      id="dpass"
+    >
+      <div class="row" style="width: 100%; margin: auto; display: block">
+        <p
+          class="col-lg-11 col-md-11 col-sm-11 col-11"
+          style="text-align: right; margin: auto"
+        >
+          Change Password
+        </p>
+        <div class="row" style="width: 100%; margin: auto; display: block">
+          <input
+            type="text"
+            style="margin: auto; display: block"
+            id="newpassword"
+            required
+            placeholder="New Password"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder=""
+          />
+          <label
+            class="col-lg-1 col-md-1 col-sm-11 col-1 2"
+            style="
+              margin: auto;
+              display: none;
+              font-size: small;
+              text-align: right;
+              color: red;
+            "
+            >Password too short</label
+          >
+
+          <input
+            type="text"
+            style="margin: auto; display: block"
+            id="confirmpassword"
+            placeholder="Confirm Password"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder=""
+          />
+          <label
+            class="col-lg-1 col-md-1 col-sm-11 col-12"
+            style="
+              margin: auto;
+              display: none;
+              font-size: small;
+              text-align: right;
+              color: red;
+            "
+            >Password does not match</label
+          >
+
+          <input
+            type="text"
+            style="margin: auto"
+            id="epassword"
+            placeholder="Confirm Password"
+            class="col-11 form-control border mt-1 form-input"
+            placeholder=""
+          />
+        </div>
+      </div>
+      <div
+        class="row form-inline mb-4"
+        style="width: 100%; margin: auto; display: flex; margin-bottom: 10px"
+      >
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-auto mr-1"
+          onclick="showal()"
+          style="margin: auto"
+          name="cancel"
+          value="cancel"
+        >
+          Cancel
+        </button>
+        <button
+          class="col-lg-1 col-md-2 col-sm-3 col-3 form-control ml-1 mr-auto"
+          onclick="getVal()"
+          style="margin: auto"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    <div class="row" style="width: 70%; margin: auto; display: none">
+      <p
+        class="col-lg-11 col-md-11 col-sm-11 col-11"
+        style="text-align: center; margin-bottom: 20px"
+      >
+        ACCOUNT ACTIVITY LOGS
+      </p>
+      <ol class="row" style="width: 100%; margin: auto">
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+        <li
+          class="col-lg-1 col-md-1 col-sm-11 2"
+          style="height: fit-content; margin: auto; margin-bottom: 5px"
+        >
+          12/3/12 12:22pm created account
+        </li>
+      </ol>
+    </div>
+  </body>
+</html>

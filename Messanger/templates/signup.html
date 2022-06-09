@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign up</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function confirmPassword() {
+            var passwd = document.getElementById('passwd').value
+            var conpasswd = document.getElementById('conpasswd').value
+            if (passwd === conpasswd) {
+                //submit form
+            } else {
+                console.log('password does not match')
+            }
+        }
+
+        function getpic() {
+            var f = document.getElementById("myfile")
+            var nyd = document.getElementById("myfilediv")
+            var dps = document.getElementById("dpwarn")
+            var mydp = document.getElementById("mydp")
+            if (dps) {
+                nyd.removeChild(dps)
+            }
+            if (mydp) {
+                nyd.removeChild(mydp)
+            }
+            //getfile
+            var d = f.files.item(0)
+            var dd = f.files.item(0).type
+            console.log(dd)
+            var yt = dd.search('/')
+            console.log(yt)
+            var tt = dd.slice(0, yt)
+            console.log(tt)
+            if (tt === 'image') {
+                var fr = new FileReader();
+                fr.readAsDataURL(d)
+                var p = document.createElement('img')
+                p.class = "col-12 border"
+                p.style = "margin:auto;height:300px;"
+                p.id = "mydp"
+                fr.onload = function(e) {
+                    console.log("adding img src")
+                    var dr = e.target.result;
+                    p.src = dr
+                }
+                nyd.appendChild(p)
+                f.value = ""
+            } else {
+                var t = document.createElement('p')
+                t.class = "col-12 border"
+                t.style = "color:red;margin:auto"
+                t.innerText = 'Please select a picture not ' + tt + " file"
+                t.id = "dpwarn"
+                nyd.appendChild(t)
+                f.value = ""
+            }
+        }
+    </script>
+</head>
+
+<body class="container border">
+    <div class="row border nav navbar" name="navbar">
+        <a href="{{url_for('home')}}" class="col-2">HOME</a>
+        <a href="{{url_for('savedhome')}}" class="col-2">SAVED</a>
+        <a href="{{url_for('conf')}}" class="col-2">CONF</a>
+        <a href="{{url_for('gallery')}}" class="col-2">Gallery</a>
+        <a href="{{url_for('aboutus')}}" class="col-2">About us</a>
+        <a href="{{url_for('myProfile')}}" class="col-2">Profile</a>
+    </div>
+    <div class="row brorder" style="height:fit-content;">
+        <img class="col-12" src="/static/angry-raging-white-tiger.jpg" height="100px">
+    </div>
+    <div class="row border" style="height: fit-content;">
+        <p class="col-11 border" style="height: fit-content;margin:auto;text-align:center;">
+            Create Account
+        </p>
+        <div class="col-9 border" style="height: fit-content;margin:auto;">
+            <div class="row border" id="myfilediv"></div>
+            <form class=" row form border " method="POST" enctype="multipart/form-data" action="{{url_for('signup')}}" id="myform" style="height: fit-content; ">
+                <label class="col-3 border form-control" style="margin: auto;">select picture</label>
+                <input name="pic" id="myfile" onchange="getpic()" style="text-align:center;margin:auto" type="file" class="col-8 border">
+                <label class="col-3 border form-control " style="margin: auto;">First Name</label>
+                <input type="text " style="margin: auto;" required id="fname" name="fname" value="{{udata['fname']}}" placeholder="First Name" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " style="margin: auto;">Second Name</label>
+                <input type="text " style="margin: auto;" required id="sname" name="sname" placeholder="Second Name" value="{{udata['sname']}}" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " style="margin: auto;">Third Name</label>
+                <input type="text " style="margin: auto;" required id="tname" name="tname" value="{{udata['tname']}}" placeholder="Third Name" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " style="margin: auto;">Email</label>
+                <input type="text " style="margin: auto;" required id="email" name="email" value="{{udata['email']}}" placeholder="Email" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " style="margin: auto;">Phone Number</label>
+                <input type="number" style="margin: auto;" required id="phone" name="phone" value="{{udata['phone']}}" placeholder="Phone Number" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " style="margin: auto;">Level</label>
+                <input type="text " style="margin: auto;" id="level" name="level" placeholder="level" value="{{udata['level']}}" class="col-7 border form-control">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " required style="margin: auto;">Password</label>
+                <input type="password" type="" style="margin: auto;" id="passwd" name="passwd" placeholder="Password" class="col-7 border form-control ">
+                <span class="col-1 "></span>
+                <label class="col-3 border form-control " required style="margin: auto;">Confirm Password</label>
+                <input type="password" style="margin: auto;" id="conpasswd" name="cpasswd" placeholder="Confirm Password" class="col-7 border form-control ">
+                <span class="col-1 "></span>
+                <p class="col-12 border" style="text-align: center;color:rgb(161, 7, 7);">{{msg}}</p>
+                <span class="col-5 "></span>
+                <button class="col-2 border btn btn-primary form-control" style="margin: auto;margin-right:5px;" name="cancel " value="cancel ">
+                        Cancel
+                    </button>
+                <button class="col-2 border btn btn-primary " name="submit" style="margin: auto;margin-left:5px;" value="submit ">
+                        Submit
+                    </button>
+            </form>
+            <script>
+                var myf = document.getElementById("myform")
+                console.log("my form")
+                console.log(myf)
+                myf.onsubmit = function(e) {
+                    var v = document.getElementById("fname")
+                    console.log(v)
+                    var e = document.getElementById("sname")
+                    console.log(e)
+                    var d = document.getElementById("tname")
+                    console.log(d)
+                    var desc = document.getElementById("email")
+                    console.log(desc)
+                    var p = document.getElementById("phone")
+                    console.log(desc)
+                    var pa = document.getElementById("passwd")
+                    console.log(desc)
+                    var cp = document.getElementById("conpasswd")
+                    console.log(desc)
+                    if (v.value == "") {
+                        return false
+                    } else if (e.value == "") {
+                        return false
+                    } else if (d.value == "") {
+                        return false
+                    } else if (desc.value == "") {
+                        return false
+                    } else if (p.value == "") {
+                        return false
+                    } else if (pa.value == "") {
+                        return false
+                    } else if (cp.value == "") {
+                        cp.value.length
+                        return false
+                    } else if (cp.value !== pa.value) {
+                        console.log("passwd does not match")
+                        return false
+                    } else if (cp.value.lenght < 5) {
+                        console.log("passwrd too short")
+                        return false
+                    } else {
+                        return true
+                    }
+                }
+            </script>
+        </div>
+        <p class="col-11 border " style="height: fit-content;margin:auto;text-align:center; ">
+            Already have an account?Log in
+            <a href="{{url_for('s')}}">Here</a>
+        </p>
+    </div>
+</body>
+
+</html>

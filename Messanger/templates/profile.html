@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HOME</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</head>
+
+<body class="container border" style="width: 90%;margin:auto;">
+    <div class="row border navbar"></div>
+    <div class="row border" style="height: fit-content;">
+        <div class="col-7 border" style="height: fit-content;margin:auto;">
+            <img class="col-5 border" src="{{user['Dp']}}" height="180px" width="100%" style="">
+            kkkkkk
+            <span class="col-4"></span>
+            <input type="checkbox" defaultValue="false" style="margin-bottom: auto;margin-top:3px" class="col-1 border">
+            <label class="col-2 border" style="margin-bottom: auto;margin-top:3px">offline</label>
+            <div class="row border" style="margin-top: 10px;">
+                <label class="col-3 border form-control" id="username">Fist Name</label>
+                <label class="col-6 border" id="userl">{{user['Fname']}}</label>
+                <span class=" col-3 "></span>
+                <label class="col-3 border form-control" id="username">Second Name</label>
+                <label class="col-6 border" id="userl">{{user['Mname']}}</label>
+                <span class=" col-3 "></span>
+                <label class="col-3 border form-control" id="username">Third Name</label>
+                <label class="col-6 border" id="userl">{{user['Lname']}}</label>
+                <span class=" col-3 "></span>
+                <label class="col-3 border form-control " id="userEmail " style="position:relative ">Email</label>
+                <label class="col-6 border">{{user['Email']}}</label>
+                <span class=" col-3 "></span>
+                <label class=" col-3 border form-control " id=" userphone " style=" position:relative ">
+                        Phone
+                    Number
+                    </label>
+                <label class=" col-6 border ">{{user['Phone']}}</label>
+                <span class=" col-3 "></span>
+                <label class=" col-3 border form-control " id="userphone">Phone Number</label>
+                <label class=" col-6 border ">Phone Number</label>
+                <span class=" col-3 "></span>
+                <label class=" col-3 border form-control " id="userphone">Level</label>
+                <label class=" col-6 border ">Level</label>
+                <span class=" col-3 "></span>
+                <label class=" col-3 border form-control " id="userphone">Type</label>
+                <label class=" col-6 border ">{{user['Type']}}</label>
+                <span class=" col-3 "></span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

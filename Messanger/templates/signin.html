@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign up</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</head>
+
+<body class="container border">
+    <div class="row border nav navbar" name="navbar">
+        <a href="{{url_for('home')}}" class="col-2">HOME</a>
+        <a href="{{url_for('savedhome')}}" class="col-2">SAVED</a>
+        <a href="{{url_for('conf')}}" class="col-2">CONF</a>
+        <a href="{{url_for('gallery')}}" class="col-2">Gallery</a>
+        <a href="{{url_for('aboutus')}}" class="col-2">About us</a>
+        <a href="{{url_for('myProfile')}}" class="col-2">Profile</a>
+    </div>
+    <div class="row border" style="height: fit-content;">
+        <div class="row brorder" style="height: 310px;">
+            <img class="col-12" src="/static/angry-raging-white-tiger.jpg" height="300px">
+        </div>
+        <p class="col-11 border" style="height:
+                fit-content;margin:auto;text-align:center;">
+            Login
+        </p>
+        <div class="col-11 border" style="height: fit-content;margin:auto;">
+            <form class="row border" method="POST" action="{{url_for('signin')}}" id="myform" style="height:fit-content;margin:auto;width:70%;">
+                <label class="col-3  border form-control" style="margin-right: 5px;margin-left:2px;">Email</label>
+                <input class="col-6 border form-control" id="email" required name="email" value="{{email}}" placeholder="email">
+                <span class="col-2"></span>
+                <label class="col-3 border form-control" style="margin-right: 5px;margin-left:2px;">Password</label>
+                <input class="col-6 border form-control" type="password" id="passwd" required name="passwd" value="{{passwd}}" placeholder="password">
+                <span class="col-2"></span>
+                <p class="col-8 border" style="margin: auto;text-align:left;color:rgb(161, 7, 7);">{{msg}}</p>
+                <span class="col-5"></span>
+                <button class="col-2 border btn btn-primary" name="submit" value="submit">
+                        Cancel
+                    </button>
+                <button class="col-2 border btn btn-primary" name="submit" value="submit">
+                        Submit
+                    </button>
+            </form>
+            <script>
+                var myf = document.getElementById("myform")
+                console.log("my form")
+                console.log(myf)
+                myf.onsubmit = function(e) {
+                    var v = document.getElementById("email")
+                    console.log(v)
+                    var e = document.getElementById("passwd")
+                    console.log(e)
+                    if (v.value == "") {
+                        return false
+                    } else if (e.value == "") {
+                        return false
+                    } else {
+                        return true
+                    }
+                }
+            </script>
+        </div>
+        <p class="col-9 border" style="text-align: right;">
+            Dont have an account?
+            <a href="{{url_for('h')}}">Join Us</a> and experience Jesus
+        </p>
+    </div>
+</body>
+
+</html>

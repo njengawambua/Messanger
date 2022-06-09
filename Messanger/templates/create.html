@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign up</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+    <script type="text/javascript">
+        sio = io.connect((namespace = "/create"));
+        var mydata = {
+            myfile: "",
+            fname: "",
+            sname: "",
+            tname: "",
+            email: "",
+            passwd: "",
+            newpasswd: "",
+        };
+
+        function confirmPassword() {
+            var passwd = document.getElementById("passwd").value;
+            var conpasswd = document.getElementById("conpasswd").value;
+            if (passwd === conpasswd) {
+                //submit form
+            } else {
+                console.log("password does not match");
+            }
+        }
+
+        function getpic() {
+            var f = document.getElementById("myfile");
+            var nyd = document.getElementById("myfilediv");
+            var dps = document.getElementById("dpwarn");
+            // var mydp = document.getElementById("mydp")
+            //  if (dps) {
+            //    nyd.removeChild(dps)
+            ///    }
+            //  if (mydp) {
+            //  nyd.removeChild(mydp)
+            //  }
+            //getfile
+            var d = f.files.item(0);
+            mydata["myfile"] = d;
+            var dd = f.files.item(0).type;
+            console.log(dd);
+            var yt = dd.search("/");
+            console.log(yt);
+            var tt = dd.slice(0, yt);
+            console.log(tt);
+            if (tt === "image") {
+                var fr = new FileReader();
+                fr.readAsDataURL(d);
+                var p = document.getElementById("mydp");
+                //p.class = "col-12 "
+                // p.style = "margin:auto;height:160px;width:160px;-radius:80px"
+                // p.id = "mydp"
+                console.log(p);
+                if (p) {
+                    console.log("got dp");
+                    fr.onload = function(e) {
+                        console.log("adding img src");
+                        var dr = e.target.result;
+                        p.src = dr;
+                    };
+                } else {
+                    console.log("did not gt img");
+                }
+
+                //  nyd.appendChild(p)
+                f.value = "";
+            } else {
+                var t = document.createElement("p");
+                t.class = "col-12 ";
+                t.style = "color:red;margin:auto";
+                t.innerText = "Please select a picture not " + tt + " file";
+                t.id = "dpwarn";
+                nyd.appendChild(t);
+                f.value = "";
+            }
+        }
+    </script>
+</head>
+
+<body class="container-fluid" style="font-family: 'Times New Roman', Times, serif; font-size: 19px">
+    <div class="container-fluid border" style="margin: auto; width: 100vw; left: 0px">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" style="
+          position: fixed;
+          display: inline-flex;
+          width: 100%;
+          z-index: 4;
+          top: 0px;
+          height: fit-content;
+          margin: auto;
+          left: 0px;
+        ">
+            <a class="navbar-brand" href="{{url_for('home')}}">Home</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto" style="align-content: space-around; width: 100%">
+                    <li class="nav-item active" style="margin: auto; width: max-content">
+                        <a class="nav-link" href="{{url_for('home')}}"><span class="sr-only">(current)</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="container-fluid" style="margin-top: 7vh; font-size: smaller">
+      <div class="row mb-0" style="height: 30vh">
+        <img
+          class="col-12 col-lg-6 col-md-10 col-sm-12 g-0 p-0"
+          style="margin: auto"
+          src="/static/Images/Icons/church.jpg"
+          height="100%"
+        />
+      </div>
+      <div
+        class="row mt-0"
+        style="height: fit-content; margin: auto; width: 100%"
+      >
+        <div
+          class="col-lg-9 col-12 col-sm-12 col-md-12"
+          style="height: fit-content; margin: auto; width: fit-content"
+        >
+          <h1
+            class="col-sm-12 col-md-8 col-lg-6 col-12 g-0 p-0"
+            style="
+              height: fit-content;
+              margin: auto;
+              text-align: center;
+              font-size: larger;
+              color: blue;
+            "
+          >
+            Create Account
+          </h1>
+          <div
+            class="row mb-1 mt-1 g-1"
+            style="
+              height: 160px;
+              width: 160px;
+              margin: auto;
+              -radius: 80px;
+              flex-direction: column;
+            "
+            id="myfilediv"
+          >
+            <img
+              class="border"
+              id="mydp"
+              style="width: 160px; border-radius: 80px; height: 160px"
+              src="/static/Images/Icons/church.jpg"
+            />
+            <input
+              name="pic"
+              id="myfile"
+              onchange="getpic()"
+              style="
+                text-align: center;
+                margin: auto;
+                float: right;
+                width: fit-content;
+                height: min-content;
+              "
+              type="file"
+              class="mb-1 form-control col-3"
+            />
+          </div>
+          <div
+            class="row form form-group form-inline"
+            method="POST"
+            enctype="multipart/form-data"
+            id="myform"
+            style="
+              height: fit-content;
+              width: fit-content;
+              margin: auto;
+              flex-direction: row;
+            "
+          >
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12"
+              style="margin: auto; width: 100%"
+            >
+              <input
+                type="text"
+                style="margin: auto; justify-content: left"
+                required
+                id="fname"
+                onchange="getValues('fname')"
+                name="fname"
+                value="{{udata['fname']}}"
+                placeholder="First Name"
+                class="col-lg-8 col-md-7 col-12 col-sm-10 mb-1 form-control form-input"
+              />
+            </div>
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12 mb-1"
+              style="margin: auto; width: 100%"
+            >
+              <input
+                type="text "
+                style="margin: auto"
+                required
+                id="sname"
+                onchange="getValues('sname')"
+                name="sname"
+                placeholder="Second Name"
+                value="{{udata['sname']}}"
+                class="col-lg-8 col-md-7 col-sm-10 mb-1 col-12 form-control"
+              />
+            </div>
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12"
+              style="margin: auto; width: 100%; margin-right: auto"
+            >
+              <input
+                type="text "
+                style="margin: auto; float: left"
+                required
+                id="tname"
+                onchange="getValues('tname')"
+                name="tname"
+                value="{{udata['tname']}}"
+                placeholder="Third Name"
+                class="col-lg-8 col-md-7 col-10 col-sm-10 mb-1 col-12 form-control"
+              />
+            </div>
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12"
+              style="margin: auto; width: 100%"
+            >
+              <input
+                type="text"
+                style="margin: auto"
+                required
+                id="email"
+                onchange="getValues('email')"
+                name="email"
+                value="{{udata['email']}}"
+                placeholder="Email"
+                class="col-lg-8 col-md-7 col-sm-10 col-12 mb-1 form-control"
+              />
+
+              <p
+                class="col-12 col-lg-8 col-md-12 col-sm-12 col-12 form-label"
+                id="emailtag"
+                required
+                style="
+                  font-size: 10px;
+                  text-align: right;
+                  height: 15px;
+                  justify-content: space-around;
+                  display: none;
+                "
+              >
+                email error
+              </p>
+            </div>
+
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12"
+              style="margin: auto; width: 100%"
+            >
+              <input
+                type="password"
+                type=""
+                style="margin: auto; float: left; justify-content: left ;"
+                id="passwd"
+                onchange="getValues('passwd') "
+                name="passwd"
+                placeholder="Password"
+                class="col-lg-8 col-md-7 col-sm-10 mb-1 form-control"
+              />
+
+              <p
+                class="col-sm-12 col-md-10 col-lg-6 col-12 form-label"
+                id="passwordtag"
+                required
+                style="
+                  font-size: 10px;
+                  text-align: right;
+                  height: 15px;
+                  justify-content: space-around;
+                  display: none;
+                "
+              >
+                password error
+              </p>
+            </div>
+            <div
+              class="form-group form-inline col-sm-12 col-md-10 col-lg-8 col-12 mb-2"
+              style="margin: auto; width: 100%"
+            >
+              <input
+                type="password"
+                style="margin: auto"
+                id="newpasswd"
+                onchange="getValues('newpasswd')"
+                name="newpasswd"
+                placeholder="Confirm Password"
+                class="col-lg-8 col-md-7 col-sm-10 mb-0 form-control"
+              />
+
+              <p
+                class="col-sm-10 col-md-12 col-lg-12 col-12"
+                style="text-align: center; color: rgb(161, 7, 7); display: none"
+              ></p>
+            </div>
+
+            <p
+              class="col-lg-10 col-sm-10 col-md-10 col-12 form-label mb-3"
+              id="maintag"
+              required
+              style="
+                text-align: right;
+                display: block;
+                margin: 0px;
+                margin-top: 0px;
+                float: right;
+              "
+            ></p>
+
+            <div class="row form-group" style="width: 100%; margin: auto">
+              <button
+                class="form-control"
+                style="
+                  margin: auto;
+                  margin-right: 5px;
+                  text-align: center;
+                  width: max-content;
+                "
+                type="reset"
+                name="reset"
+                value="reset"
+              >
+                Cancel
+              </button>
+              <button
+                class="mr-auto form-control"
+                onclick="onsub()"
+                name="subit"
+                style="
+                  margin: auto;
+                  margin-left: 5px;
+                  z-index: 2;
+                  width: max-content;
+                "
+                value="subit "
+              >
+                Sumit
+              </button>
+            </div>
+          </div>
+          <script>
+            //get values on change  action="{{url_for('signup')}}"
+
+            function getValues(id) {
+              //
+              if (id) {
+                console.log("got node");
+                var nd = document.getElementById(id);
+                console.log(id);
+                console.log(nd);
+                if (nd) {
+                  console.log("getting values");
+                  if (mydata) {
+                    console.log("node value");
+                    console.log(mydata[id]);
+                    mydata[id] = nd.value;
+                    console.log(nd.value);
+
+                    if (id === "newpasswd") {
+                      //confirm same as passwd
+                      if (mydata[id] !== mydata["passwd"]) {
+                        //display must be the same
+                      }
+                    }
+                  } else {
+                    console.log("did not get dict");
+                  }
+                } else {
+                  console.log("did not get node");
+                }
+              }
+            }
+
+            function onsub() {
+              if (mydata["newpasswd"] !== mydata["passwd"]) {
+                //display must be the same
+                console.log("password does not confirm");
+              } else {
+                //emit this data
+                console.log("final data");
+                console.log(mydata);
+                sio.emit("createaccount", mydata);
+              }
+            }
+
+            var myf = document.getElementById("myform");
+            console.log("my form");
+            console.log(myf);
+            myf.onsubmit = function (e) {
+              var v = document.getElementById("fname");
+              console.log(v);
+              var e = document.getElementById("sname");
+              console.log(e);
+              var d = document.getElementById("tname");
+              console.log(d);
+              var desc = document.getElementById("email");
+              console.log(desc);
+              var p = document.getElementById("phone");
+              console.log(desc);
+              var pa = document.getElementById("passwd");
+              console.log(desc);
+              var cp = document.getElementById("conpasswd");
+              console.log(desc);
+              if (v.value == "") {
+                return false;
+              } else if (e.value == "") {
+                return false;
+              } else if (d.value == "") {
+                return false;
+              } else if (desc.value == "") {
+                return false;
+              } else if (p.value == "") {
+                return false;
+              } else if (pa.value == "") {
+                return false;
+              } else if (cp.value == "") {
+                cp.value.length;
+                return false;
+              } else if (cp.value !== pa.value) {
+                console.log("passwd does not match");
+                return false;
+              } else if (cp.value.lenght < 5) {
+                console.log("passwrd too short");
+                return false;
+              } else {
+                return true;
+              }
+            };
+
+            sio.on("updatedata", function (data) {
+              console.log("got update data");
+              console.log(data);
+              if (data["Type"] === "Email") {
+                console.log("got email update");
+                //update tag
+                var tg = document.getElementById("emailtag");
+                if (tg) {
+                  console.log("got email tag");
+                  tg.innerText = data["Msg"];
+                  tg.style.display = "block";
+                }
+              }
+              if (data["Type"] === "Password") {
+                console.log("got passwd update");
+                ////update tag
+                var tg = document.getElementById("passwordtag");
+                if (tg) {
+                  tg.innerText = data["Msg"];
+                  tg.style.display = "block";
+                }
+              }
+              if (data["Type"] === "Error") {
+                console.log("got error update");
+                //update tag
+                var tg = document.getElementById("maintag");
+                if (tg) {
+                  tg.innerText = data["Msg"];
+                  tg.style.display = "block";
+                }
+              }
+              if (data["Type"] === "Success") {
+                console.log("got Success update");
+                //update tag
+                //redirect to given data
+                var tg = document.getElementById("maintag");
+                if (tg) {
+                  tg.innerText = data["Msg"];
+                  tg.style.display = "block";
+
+                  //redirect
+                  var ur =
+                    data["Token"] + "/" + data["Email"] + "/" + data["Userid"];
+                  console.log(ur);
+                  console.log(data["Token"]);
+                  console.log(data["Email"]);
+                  console.log(data["Userid"]);
+                  window.location =
+                    "/toke/" +
+                    data["Token"] +
+                    "/" +
+                    data["Email"] +
+                    "/" +
+                    data["Userid"];
+                }
+              }
+            });
+          </script>
+          <p
+            class="col-11 mt-1 mb-2 p-0 g-0"
+            style="
+              height: fit-content;
+              margin: auto;
+              text-align: right;
+              float: right;
+            "
+          >
+            Already have an account?<br />Log in
+            <a href="{{url_for('login')}}">Here</a>
+                        </p>
+            </div>
+    </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign up</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <script src="/static/js/socket.io.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+
+    <script>
+        var isloaded = "false";
+
+        function k() {
+            a = showOpenFilePicker().then(function(e) {
+                console.log(e);
+                if (e.length > 0) {
+                    console.log(e[0]);
+                    e[0].getFile().then(function(f) {
+                        console.log(f);
+                        console.log(f["name"]);
+                        gotattatch(f);
+                    });
+                }
+            });
+            console.log("got mouse click");
+        }
+    </script>
+
+    <script type="text/javascript">
+        sio = io.connect((namespace = "/chat"));
+        var myid = "";
+        var mymsg = "";
+        var mydat;
+        var myatts = [];
+        sio.on("disconnect", function() {
+            console.log("disconnected");
+        });
+
+        if (sio.ConnectionRefusedError) {
+            console.log("connection refused");
+        }
+
+        function gotattatch(a) {
+            // var a = document.getElementById('attatch')
+            var mya = document.getElementById("myattatch");
+            console.log(a);
+            if (a.size > 0) {
+                console.log(a.files);
+                var att = a;
+                var tt = a["type"];
+                console.log(tt);
+                var tn = a["name"];
+                var yt = tt.search("/");
+                console.log(yt);
+                var ss = tt.slice(yt + 1);
+                var dd = tt.slice(0, yt);
+
+                if (dd === "audio") {
+                    var attdic = {
+                        File: att,
+                        Name: tn,
+                        Type: dd,
+                        Ext: ss,
+                    };
+                    console.log("this is the dic");
+                    console.log(attdic);
+                    myatts.push(attdic);
+                    console.log("this is the dic list");
+                    console.log("got audio ");
+                    var nimg = document.createElement("audio");
+                    nimg.controls = true;
+                    nimg.preload = false;
+                } else if (dd === "image") {
+                    var attdic = {
+                        File: att,
+                        Name: tn,
+                        Type: dd,
+                        Ext: ss,
+                    };
+                    console.log("this is the dic");
+                    console.log(attdic);
+                    myatts.push(attdic);
+                    console.log("this is the dic list");
+                    console.log("got image");
+                    var nimg = document.createElement("img");
+                } else if (dd === "video") {
+                    var attdic = {
+                        File: att,
+                        Name: tn,
+                        Type: dd,
+                        Ext: ss,
+                    };
+                    console.log("this is the dic");
+                    console.log(attdic);
+                    myatts.push(attdic);
+                    console.log("this is the dic list");
+                    console.log("got video");
+                    var nimg = document.createElement("video");
+                    nimg.controls = true;
+                    nimg.preload = true;
+                } else {
+                    console.log("got unwanted format");
+                    console.log("poped unwanted data");
+                    console.log(mholder.files.item(i));
+                }
+                //add to myattatch
+                var bd = document.createElement("button");
+                bd.className = "g-1 p-1" + tn;
+                bd.innerText = "X";
+                bd.style =
+                    "height:30px;width:25px;align-content:center;position:absolute;z-index:2";
+
+                var nnn = document.createElement("p");
+                nnn.innerText = tn;
+                nnn.style = "text-align: center";
+                nnn.className = "col-12";
+                console.log(mya);
+                nimg.style = "width:100%;height:140px";
+                nimg.className = "col-12";
+
+                console.log(nimg);
+
+                let md = document.createElement("div");
+                md.className = "col-3 g-0 p-0 ml-0 border";
+                md.style = "width:100%;";
+                md.id = tn;
+
+                md.appendChild(bd);
+                md.appendChild(nimg);
+
+                mya.appendChild(md);
+                bd.addEventListener("click", function() {
+                    console.log("clicked remove");
+                    console.log(tn);
+                    var ssy = document.getElementById(tn);
+                    var bf = document.getElementsByClassName(tn);
+                    console.log(bf);
+                    //var dt = bf.item(0)
+                    console.log("clicking remove");
+                    console.log(ssy);
+                    mya.removeChild(ssy);
+
+                    // mya.removeChild(bf.item(0))
+                    console.log(tn);
+                    console.log("removed");
+                    for (var l = 0; l < myatts.length; l++) {
+                        var b = myatts[l];
+                        if (b["Name"] === tn) {
+                            console.log("got it");
+                            console.log(b["Name"]);
+                            console.log(myatts);
+                            myatts.pop(b);
+                            console.log("ended");
+                            console.log(myatts);
+                            console.log("removed");
+                            console.log(b);
+                        }
+                    }
+                });
+                var fr = new FileReader();
+                fr.readAsDataURL(att);
+                console.log(fr);
+                fr.onload = function(e) {
+                    console.log("gotten src");
+                    var g = e.target.result;
+                    nimg.src = g;
+                    console.log("added src");
+                };
+            }
+            a.value = "";
+        }
+
+        function newE(chatid) {
+            hp();
+            var it = {};
+            var m = document.getElementById("newtext");
+            var a = document.getElementById("attatch");
+            var mya = document.getElementById("myattatch");
+            var t = m.value;
+            console.log(a);
+            //  a.value = ''
+            console.log(myatts);
+            if (myatts.length > 0) {
+                console.log("got attatchments");
+                console.log(myatts.length);
+                var atts = {};
+                it["File"] = myatts;
+                atts["ChatId"] = chatid;
+                it["Msg"] = t;
+                it["Type"] = "Msg";
+                it["Chatid"] = chatid;
+                console.log(chatid);
+                sio.emit("msg", it);
+                myatts = [];
+                m.value = "";
+                //clear select list
+                var chil = mya.children;
+                console.log(chil);
+                while (chil.length > 0) {
+                    var sst = chil.length + 1;
+                    console.log();
+                    for (var i = 0; i < chil.length; i++) {
+                        console.log(i);
+                        console.log(chil.item(i));
+                        mya.removeChild(chil.item(i));
+                        console.log("removed");
+                        console.log(chil.length);
+                    }
+                }
+            } else {
+                it["Msg"] = t;
+                it["Type"] = "Msg";
+                it["Chatid"] = chatid;
+                console.log(chatid);
+                sio.emit("msg", it);
+                m.value = "";
+            }
+        }
+
+        sio.on("ack", function(da) {
+            console.log(da);
+        });
+
+        function d() {
+            var mholder = document.getElementById("attatch");
+            console.log(mholder); ///
+            if (!mholder) {
+                console.log("mholder missing");
+            } else {
+                if (mholder.files.length < 0) {
+                    console.log("no file selected");
+                } else if (mholder.files.length > 0) {
+                    console.log(mholder.files.length);
+                    //create baby elements
+                    for (var i = 0; i < mholder.files.length; i++) {
+                        //create main div
+                        //create img,two input elements
+                        var mmdiv = document.createElement("div");
+                        mmdiv.className = "row";
+                        console.log(mholder.files);
+                        var dss = mholder.files;
+                        console.log(dss);
+                        var ud = i;
+                        var fr = i;
+                        console.log(ud);
+                        console.log(mholder.files.item(i));
+                        var myt = mholder.files.item(i).type;
+                        console.log(myt);
+                        var yt = myt.search("/");
+                        console.log(yt);
+                        var tt = myt.slice(0, yt);
+                        console.log(tt);
+                        if (tt === "audio") {
+                            console.log("got audio ");
+                            var nimg = document.createElement("audio");
+                            nimg.controls = true;
+                            nimg.preload = false;
+                        } else if (tt === "image") {
+                            console.log("got image");
+                            var nimg = document.createElement("img");
+                        } else if (tt === "video") {
+                            console.log("got video");
+                            var nimg = document.createElement("video");
+                            nimg.controls = true;
+                            nimg.preload = true;
+                        } else {
+                            console.log("got unwanted format");
+                            console.log("poped unwanted data");
+                            console.log(mholder.files.item(i));
+                        }
+                        console.log("getting file reader");
+                        var i;
+                        console.log("this is the filereader name");
+                        console.log(i);
+                        var fr = new FileReader();
+                        console.log(i);
+                        console.log("got file reader");
+                        console.log("reading file as dataUrl");
+                        var td = mholder.files.item(i);
+                        console.log(td);
+                        //sio.emit("image", td)
+                        fr.readAsDataURL(td);
+                        console.log("read file as dataUrl");
+                        console.log("creating children elements");
+                        console.log("created children elements");
+                        console.log("adding attributes");
+                        nimg.className = "col-8";
+                        nimg.style = "margin:auto ";
+                        nimg.width = "100%";
+                        nimg.height = "250";
+                        ///nimg src after file reader
+                        console.log("appended children elements");
+                        console.log("this is ud");
+                        console.log(ud);
+                        console.log(i);
+                        mholder.name = mholder.files.item(i).name;
+                        mholder.id = mholder.files.item(i).name + i;
+                        fr.onload = function(e) {
+                            var th = {};
+                            console.log("setting file src as dataUrl");
+                            var dr = e.target.result;
+                            console.log("setting file src as dataUrl");
+                            console.log("appending children elements");
+                            th[i] = dr;
+                            console.log(th);
+                            nimg.src = dr;
+                        };
+                        fr.onerror = function(e) {
+                            console.log("found error");
+                            console.log(e);
+                        }; ///get form data
+                    }
+                    console.log("iiiiiiiiiiiiiiiiiiiiiiiiii");
+                    console.log("till the end");
+                } else {
+                    console.log("unknown error");
+                }
+            }
+        }
+    </script>
+</head>
+<script>
+    function createmenu(chat) {
+        console.log(chat);
+        var optid = "opt" + chat["Id"];
+        var optbt = document.getElementById(optid);
+        if (optbt) {
+            console.log(optbt);
+            optbt.style.display = "none";
+        }
+
+        let id = chat["Id"];
+        console.log(id);
+        let k = "msg" + id;
+        let msgdiv = document.getElementById(k);
+        if (msgdiv) {
+            msgdiv.className = "row shadow ml-4 border";
+
+            let mainmenudiv = document.createElement("div");
+            //try overlay whole chat
+            mainmenudiv.className = "row border ";
+            mainmenudiv.style = "margin:auto;width:100%;";
+            mainmenudiv.id = "mainmenudiv" + chat["Id"];
+
+            let menudiv = document.createElement("div");
+            //try overlay whole chat
+            menudiv.className = "row bg-light";
+            menudiv.style = "margin:auto;width:fit-content;";
+
+            let dellabel = document.createElement("button");
+            dellabel.className = "col-6  g-0 p-0 border btn btn-primary";
+            dellabel.innerText = "Delete";
+            dellabel.style =
+                "float:right;margin:auto;height:max-content;text-align:center";
+            dellabel.addEventListener("click", function() {
+                console.log("clicking remove");
+                removemsg(chat);
+                msgdiv.className = "row shadow-sm ml-4  border";
+            });
+
+            let cancellabel = document.createElement("button");
+            cancellabel.className = "col-6 g-0 p-0 border  btn btn-primary";
+            cancellabel.innerText = "cancel";
+            cancellabel.style =
+                "float:right;margin:auto;height:max-content;text-align:center";
+            cancellabel.addEventListener("click", function() {
+                console.log("clicking cancel");
+                cancelremove(chat);
+                msgdiv.className = "row shadow-sm ml-4  border";
+            });
+
+            let te = document.createElement("p");
+            te.className = "col-12 ";
+            te.style =
+                "margin:auto;width:100%;height:max-content;text-align:center;color:red";
+            te.innerText = "Are you sure?";
+            menudiv.appendChild(te);
+            menudiv.appendChild(dellabel);
+            menudiv.appendChild(cancellabel);
+            mainmenudiv.appendChild(menudiv);
+            msgdiv.appendChild(mainmenudiv);
+            //msgdiv.style.backgroundColor = 'grey'
+        }
+    }
+
+    function cancelremove(chat) {
+        //unhighlight
+        //remove
+        let mmid = "mainmenudiv" + chat["Id"];
+        let mdi = document.getElementById(mmid);
+        if (mdi) {
+            console.log(mdi);
+            let id = chat["Id"];
+            console.log(id);
+            let k = "msg" + id;
+            let msgdiv = document.getElementById(k);
+            if (msgdiv) {
+                console.log(msgdiv);
+                msgdiv.removeChild(mdi);
+                msgdiv.style.backgroundColor = "white";
+                var optid = "opt" + chat["Id"];
+                var optbt = document.getElementById(optid);
+                if (optbt) {
+                    console.log(optbt);
+                    optbt.style.display = "block";
+                }
+            }
+        }
+    }
+    var msgdata = {};
+
+    function onl(chatid) {
+        console.log("this is my data");
+        console.log(chatid);
+        sio.emit("joinchat", (da = chatid));
+        let lf;
+        let d = document.getElementById("mesger");
+        sio.on("recvmsg", function(da) {
+            console.log("messg", da);
+            da["Att"] = [];
+            msgdata[da["Id"]] = da;
+            // msgdata[da['Id']['Att']] = []
+            let md = document.createElement("div");
+            md.className = "row";
+            md.id = "menu" + da["Id"];
+            md.style = "height:fit-content;display:none;margin:auto;width:100%";
+
+            let ml = document.createElement("img");
+            //ml.type = 'image'
+            ml.src = "/static/Images/Icons/men.png";
+            ml.class = " ml-auto mr-1 bg-light";
+            ml.id = "opt" + da["Id"];
+            ml.style =
+                "height:15px;width:15px;float:right;margin:auto;margin-left:auto;margin-right:5px;z-index:2";
+            ml.addEventListener("click", function() {
+                console.log("clicking toggle menu");
+                createmenu(da);
+            });
+
+            let mlk = document.createElement("img");
+            mlk.class = " ml-auto mr-1 bg-light";
+            mlk.addEventListener("click", function() {
+                console.log("clicking toggle menu");
+                console.log(da["Id"]);
+                var ii = da["Id"];
+                console.log(ii);
+                opt(ii);
+            });
+
+            var sm = document.createElement("span");
+            sm.className = "col-6 ";
+
+            var sml = document.createElement("div");
+            sml.className = "col-6 ";
+            sml.style = "width:100%;margin:auto;";
+
+            var mdi = document.createElement("div");
+            mdi.className = "row g-0 p-0";
+            mdi.style = "margin:auto;width:100%";
+            mdi.appendChild(ml);
+
+            var mlabel = document.createElement("label");
+            mlabel.className = "col-6 bg-light g-0 p-0";
+            mlabel.innerText = "Delete";
+            mlabel.style =
+                "float:right;margin:auto;position:absolute;text-align:center;z-index:3";
+            mlabel.addEventListener("click", function() {
+                console.log("clicking remove");
+                removemsg(da);
+            });
+
+            // sml.appendChild(mlabel)
+            md.appendChild(sm);
+            md.appendChild(sml);
+            mdi.appendChild(md);
+
+            var mmsg = document.getElementById(da["Id"]);
+            // var sp = document.createElement('span')
+            var l = document.createElement("label");
+            l.className = "col-12 mb-0";
+            l.innerText = da["SentDate"];
+            l.style =
+                "text-align:right;height:20px;overflow:hidden;font-size:12px;color:blue;width:max-content";
+
+            var di = document.createElement("div");
+            di.className = "row  mb-2 mt-1 ";
+            // di.id = 'msg' + da['Id']
+            di.style = "width:100%;border-radius:5px;background-color:white;";
+
+            var doi = document.createElement("div");
+            doi.className = "row ";
+            doi.style = "margin-top:10px;margin:auto;width:100%;";
+
+            var did = document.createElement("div");
+            did.className = "row border";
+            did.id = "att" + da["Id"];
+
+            //  did.addEventListener('click', function () {
+            //      console.log("about to expand", da['Id'])
+            //       maxmedia(da['Id'])
+            //   })
+
+            var n = document.createElement("p");
+            n.className = "col-12 pt-0 g-0 ";
+            n.innerText = da["Msg"];
+            n.style =
+                "text-align:left;word-break:break-all;margin:auto;text-indent:0px;font-size:17px;width:max-content";
+
+            //  sp.className = "col-2"
+
+            var dia = document.createElement("div");
+            dia.className = "row shadow-sm ml-4 mr-auto border";
+
+            dia.id = "msg" + da["Id"];
+            dia.appendChild(mdi);
+            //  di.appendChild(md)
+            dia.appendChild(did);
+            dia.appendChild(n);
+            dia.appendChild(l);
+            di.appendChild(dia);
+            //get main message div
+            d.appendChild(di);
+
+            let dh = d.scrollHeight + 33;
+
+            var y = da["UserId"];
+            var t = myid;
+            console.log(y);
+            console.log(t);
+
+            if (y !== t) {
+                console.log("this mine");
+                console.log(da["Msg"]);
+                dia.style =
+                    "width:min-content;max-width:70%;float:left;margin-left:2px;";
+                did.style =
+                    "display:none;height:fit-content;width:220px;margin:auto;";
+                d.scrollTo(0, dh);
+            } else {
+                console.log("this not mine");
+                dia.style =
+                    "width:min-content;max-width:70%;float:right;margin-right:2px;margin:left:auto;margin:auto;margin-right:2px;";
+                did.style = "display:none;height:fit-content;width:220px;margin:auto";
+                console.log(da["ReadAt"]);
+                if (da["ReadAt"] === undefined) {
+                    console.log("not read");
+
+                    // sio.emit("updread",da)
+                    var t = document.getElementById("myunread");
+                    var c = Number(t.innerText);
+                    t.innerText = c + 1;
+                    t.style.display = "block";
+                } else {
+                    console.log("mesg rrrrrrrrrrrrr read");
+                    d.scrollTo(0, dh);
+                }
+                di.addEventListener("pageshow", function() {
+                    console.log("\n\n\n\n  got focus", da);
+                });
+            }
+            //  di.appendChild(im)
+        });
+
+        sio.on("recvatt", function(data) {
+            if (msgdata[data["MsgId"]]) {
+                console.log("got related msg");
+                console.log(msgdata[data["MsgId"]]);
+                var d = msgdata[data["MsgId"]];
+                d["Att"].push(data);
+                console.log(d["Att"]);
+                // msgdata[data['MsgId']['Att']].push(data)
+            }
+            console.log("got file");
+            console.log(data);
+            var fi = data;
+            console.log(fi);
+            var lf;
+            //get msg div and msg att div
+            let mid = "msg" + data["MsgId"];
+            let atid = "att" + data["MsgId"];
+
+            let mdiv = document.getElementById(mid);
+            let atdiv = document.getElementById(atid);
+
+            if (atdiv && mdiv) {
+                console.log("got main and att div");
+                if (data["Type"] === "audio") {
+                    console.log("got audio");
+                    lf = document.createElement("audio");
+                    lf.style =
+                        "height:50px;width:100%;margin-bottom:10px;border-radius: 10px;margin:auto";
+                    lf.src = "/static/Images/" + data["Name"];
+                    lf.controls = true;
+                    mdiv.style.width = "40%";
+                } else if (data["Type"] === "image") {
+                    console.log("got image ");
+                    lf = document.createElement("img");
+                    lf.style =
+                        "height:200px;width:100%;margin-bottom:10px;border-radius:5px;margin:auto";
+                    lf.src = "/static/Images/" + data["Name"];
+                    console.log(lf.src);
+                    mdiv.style.width = "40%";
+                } else if (data["Type"] === "video") {
+                    console.log("got video");
+                    lf = document.createElement("video");
+
+                    lf.controls = "true";
+                    lf.style =
+                        "height:200px;width:100%;margin-bottom:10px;border-radius:10px;margin:auto";
+                    lf.src = "/static/Images/" + data["Name"];
+                    mdiv.style.width = "40%";
+                } else {
+                    console.log(data["Type"]);
+                }
+                if (lf) {
+                    lf.className = "col-11 mb-1";
+                    atdiv.style.display = "block";
+                    atdiv.appendChild(lf);
+                    lf.addEventListener("click", function() {
+                        console.log("about to expand", data);
+                        maxmedia(data["MsgId"], data);
+                    });
+                }
+                let d = document.getElementById("mesger");
+                let dh = d.scrollHeight + 33;
+                d.scrollTo(0, dh);
+            } else {
+                console.log("did not get divi");
+            }
+        });
+    }
+    console.log("outside");
+    console.log(mydat);
+</script>
+<script type="text/javascript">
+    sio.on("changedp", function(da) {
+        console.log("dpchange", da);
+    });
+</script>
+
+<body class="container-fluid g-0 p-0 mt-0 bg-light mb-0" id="mainbody" style="
+      width: 100vw;
+      overflow-x: hidden;
+      height: 100vh;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 19px;
+      margin: auto;
+    " onload="onl({{Id}})" onscroll="hp()">
+    <script>
+        sio.on("mydata", function(data) {
+            console.log("got user profile data");
+            console.log(data);
+            myid = data["Id"];
+            var dp = document.getElementById("mydp");
+            var name = document.getElementById("myname");
+            if (data && dp && name) {
+                //get user dp and name element
+                if (data["Dp"] != null) {
+                    let r = "/static/Images/DP/" + data["Dp"];
+                    dp.src = "/static/Images/DP/" + data["Dp"];
+                    document.getElementById("DP").src = r;
+                } else {
+                    let r = "/static/Images/DP/default.png";
+                    dp.src = "/static/Images/DP/default.png";
+                    document.getElementById("DP").src = r;
+                }
+
+                name.innerText = data["Name"];
+                var s = "http://192.168.43.109:5000/otherProfile/" + data["Id"];
+                console.log("profile link");
+                console.log(s);
+                // name.href = s
+                name.addEventListener("click", function() {
+                    console.log("click user p");
+                    bodyload(data["Id"]);
+                });
+            }
+        });
+    </script>
+    <!--
+        <div class="row border" style="width:98%;height:780px;margin:auto;display:none">
+            <div class="col-6 border">
+                <div class="row border">
+                    <p class="col-10 border" style="margin: auto;text-align:center">Peter Njenga</p>
+                    <video class="col-12 border" controls preload="auto" style="height: 600px;width:100%;margin-top:20px;margin-bottom:40px" src="/static/Videos/Kingsman.mp4"></video>
+                    <div class="row border" style="margin:auto;width:90%">
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Mute</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Video</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">End</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Video</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Hold</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 border">
+                <div class="row border">
+                    <p class="col-10 border" style="margin: auto;text-align:center">Peter Njenga</p>
+                    <video class="col-12 border" controls preload="auto" style="height:600px;width:100%;margin-top:20px;margin-bottom:40px" src="/static/Videos/Kingsman.mp4"></video>
+                    <div class="row border" style="margin:auto;width:90%">
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Mute</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Video</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">End</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Video</button>
+                        <button style="margin: auto;" class="col-2 btn btn-primary form-control">Hold</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+    <script>
+        var myeducation = [];
+        var mymedical = [];
+        var mypersonal;
+        var myemergency = [];
+        var myaccount = [];
+        var dtas;
+
+        function hideotherprofile() {
+            let o = document.getElementById("mesger");
+            let p = document.getElementById("otherdiv");
+            var mainbtn = top.document.getElementById("iframebtn");
+            var minibtn = document.getElementById("mybtn");
+            if (o && p) {
+                console.log("got both divs");
+                o.style.display = "block";
+                p.style.display = "none";
+                mainbtn.style.display = "block";
+                minibtn.style.display = "none";
+            } else {
+                console.log("did not get divs");
+            }
+        }
+
+        function bodyload(ud) {
+            var mainbtn = top.document.getElementById("iframebtn");
+            var minibtn = document.getElementById("mybtn");
+
+            console.log("got udata");
+            console.log(ud);
+            let o = document.getElementById("mesger");
+            let p = document.getElementById("otherdiv");
+            if (o && p && mainbtn && minibtn) {
+                console.log("got both btns");
+                console.log(mainbtn, minibtn);
+                if (o.style.display === "block" && p.style.display === "none") {
+                    sio.emit("OtherProfile", ud);
+                    o.style.display = "none";
+                    p.style.display = "block";
+                    mainbtn.style.display = "none";
+                    minibtn.style.display = "block";
+
+                    minibtn.addEventListener("click", function(e) {
+                        console.log("hidding other user data");
+                        hideotherprofile();
+                    });
+                } else {
+                    o.style.display = "block";
+                    p.style.display = "none";
+                    mainbtn.style.display = "block";
+                    minibtn.style.display = "none";
+                }
+            }
+        }
+    </script>
+    <div class="row g-0 p-0 mb-0 ml-0 mr-0 bg-white" id="otherdiv" style="
+        width: 80%;
+        margin: auto;
+        overflow-y: hidden;
+        height: 87%;
+        display: none;
+        overflow-x: auto;
+        z-index: 4;
+        margin-top: 27px;
+      ">
+        <div class="row bg-light" style="
+          height: max-content;
+          width: 100%;
+          margin: auto;
+          align-content: center;
+          overflow-y: hidden;
+          z-index: 3;
+          position: absolute;
+          align-items: baseline;
+        ">
+            <div class="row form-group mb-1 g-0 p-0 ml-0 mr-auto bg-light" id="dets" style="
+            width: 100vw;
+            margin: auto;
+            height: 100%;
+            overflow-y: hidden;
+            scrollbar-color: green;
+          ">
+                <div class="row mb-0 g-0 p-0 ml-0 mr-auto" style="
+              width: 90vw;
+              margin: auto;
+              display: block;
+              z-index: 3;
+              align-content: center;
+            ">
+                    <img id="DP" class="border" height="200px" width="200px" style="
+                margin: auto;
+                border-radius: 100px;
+                margin-bottom: 10px;
+                margin-left: 35%;
+              " src="" />
+                </div>
+                <div class="row mb-1 g-0 p-2" style="width: 80%; margin: auto">
+                    <p class="col-lg-11 col-md-11 col-sm-11 col-11" style="text-align: center">
+                        Account Details
+                    </p>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light form-label" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Email</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Email"
+              style="margin: auto; height: fit-content; overflow: hidden"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light form-label" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Level</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Role"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Status</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Status"
+              style="margin: auto; height: fit-content"
+              >Active</label
+            >
+            <label
+              for=""
+              class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light form-label"
+              style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              "
+              >Description</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Desc"
+              style="margin: auto; height: fit-content"
+            ></label>
+                </div>
+                <div class="row mb-1 g-0 p-2" style="width: 80%; margin: auto">
+                    <p class="col-lg-11 col-md-11 col-sm-11 col-11" style="text-align: center">
+                        Personal
+                    </p>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">First Name</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="fname"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Second Name</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="sname"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Third Name</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="tname"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Marital</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="mstatus"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Sex</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="sex"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Occupation</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="occupation"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Phone</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="fcontact"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Phone</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="scontact"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">D.O.B</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="dob"
+              style="margin: auto; height: fit-content"
+            ></label>
+                </div>
+
+                <div class="row mb-1 g-0 p-2" style="width: 80%; margin: auto; display: none">
+                    <p class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2" style="text-align: center">
+                        Medical
+                    </p>
+                    <div class="row" id="Allergy" style="width: 100%; margin: auto">
+                        <p class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2" style="text-align: left">
+                            Allergies
+                        </p>
+                    </div>
+                    <div class="row" id="Disability" style="width: 100%; margin: auto">
+                        <p class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2" style="text-align: left">
+                            Disability
+                        </p>
+                    </div>
+                    <div class="row" id="Chronic" style="width: 100%; margin: auto">
+                        <p class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2" style="text-align: left">
+                            Chronic
+                        </p>
+                    </div>
+                </div>
+                <div class="row mb-1 g-0 p-2" style="width: 80%; margin: auto; display: none">
+                    <p class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2" style="text-align: center">
+                        Education
+                    </p>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">Primary School</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Primary"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                margin: auto;
+                height: fit-content;
+                margin-bottom: 3px;
+                overflow: hidden;
+              ">High School</label
+            >
+            <label
+              for=""
+              class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+              id="Secondary"
+              style="margin: auto; height: fit-content"
+            ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                height: fit-content;
+                margin: auto;
+                margin-bottom: auto;
+                margin-top: 1px;
+              ">Tertiary</label
+            >
+            <div
+              for=""
+              class="col-8 border"
+              id="Tertiary"
+              style="margin: auto; height: fit-content"
+            ></div>
+          </div>
+          <script>
+            sio.on("otherdata", function (data) {
+              console.log("got update data");
+              console.log(data);
+              if (data) {
+                //check category
+                if (data["Type"] === "Account") {
+                  ///update fields
+                  console.log("got account");
+                  var y = data["keys"];
+                  for (var r = 0; r < y.length; r++) {
+                    var c = y[r];
+                    console.log(y[r]);
+
+                    var nd = document.getElementById(c);
+
+                    if (nd) {
+                      console.log("got main node");
+                      console.log(nd);
+                      //update value
+                      if (c === "DP") {
+                        //nd.src = "/static/IMG.jpg"
+                      } else {
+                        nd.innerText = data[c];
+                      }
+                    }
+                  }
+                } else if (data["Type"] === "Personal") {
+                  ///update fields
+                  console.log("got personal");
+                  //get fields and update innertext and value for edit div
+                  var y = data["keys"];
+                  for (var r = 0; r < y.length; r++) {
+                    console.log(y[r]);
+                    var n = y[r];
+                    var nd = document.getElementById(n);
+
+                    if (nd) {
+                      console.log("got main node");
+                      console.log(nd);
+                      //update value
+                      nd.innerText = data[n];
+                    }
+                  }
+                  mypersonal = data;
+                } else if (data["Type"] === "Education") {
+                  ///update fields first three fields then create
+                  console.log("got education");
+                  if (
+                    data["Level"] === "Primary" ||
+                    data["Level"] === "Secondary"
+                  ) {
+                    //get field and update innertext and value for edit div
+                    console.log("got listed");
+                    var n = data["Level"];
+                    var nd = document.getElementById(n);
+                    var ne = "e" + data["Level"];
+                    console.log(ne);
+                    data["CMD"] = "Update";
+                    myeducation.push(data);
+                    if (nd) {
+                      //update value
+                      console.log("got main node");
+                      console.log(nd);
+                      nd.innerText = data["Institution"];
+                    }
+                  } else {
+                    //create node
+                    console.log("got tertiary");
+                    if (data["CMD"] === "Create") {
+                      console.log("got create");
+                      data["CMD"] = "Update";
+                      myeducation.push(data);
+                      //remember to create edit nodes
+                      var ed = document.getElementById("Tertiary");
+                      if (ed) {
+                        console.log(ed);
+                        console.log("got edu div");
+
+                        var l = document.createElement("label");
+                        l.className = "col-lg-1 col-md-1 col-sm-11 2";
+                        l.style = "margin: auto;";
+                        l.innerText = "Other";
+
+                        var ll = document.createElement("label");
+                        ll.style = "margin:5px;";
+                        // ll.id = "ePrimary"
+                        ll.id = "minst" + data["Id"];
+                        ll.innerText = data["Institution"];
+                        ll.className = "col-lg-1 col-md-1 col-sm-11 0 ";
+
+                        var ld = document.createElement("div");
+                        ld.className = "row ";
+                        ld.style = "width:100%;margin:auto";
+                        ld.id = "edudiv" + data["Id"];
+
+                        ld.appendChild(ll);
+                        ed.appendChild(ld);
+                      }
+                    } else if (data["CMD"] === "Update") {
+                      console.log("got update education");
+                      console.log(data);
+                      var edudiv = document.getElementById("Tertiary");
+                      var inistid = "minst" + data["Id"];
+                      var inst = document.getElementById(inistid);
+
+                      if (inst && edudiv) {
+                        console.log("got inst to update");
+                        console.log(inst);
+                        inst.innerText = data["Institution"];
+                        myeducation.push(data);
+                      } else {
+                        console.log("did not get node to update");
+                        console.log(inst);
+                        console.log(edudiv);
+                      }
+                    } else if (data["CMD"] === "Delete") {
+                      console.log("got delete");
+                      //get div and remove div
+                      //rem to remove edit nodes
+                      var mid = "edudiv" + data["Id"];
+                      var mdi = document.getElementById(mid);
+                      var edudiv = document.getElementById("Tertiary");
+
+                      if (edudiv && mdi) {
+                        console.log("got node to delete");
+                        console.log(mdi);
+                        console.log(edudiv);
+                        edudiv.removeChild(mdi);
+                        //update records
+                      } else {
+                        console.log("did not get node to delete");
+                        console.log(mdi);
+                        console.log(edudiv);
+                      }
+                    } else {
+                      console.log("unkown data type");
+                    }
+                  }
+                } else if (data["Type"] === "Medical") {
+                  console.log("got medical");
+                  if (data["CMD"] === "Create") {
+                    console.log("got create");
+                    console.log("got medical create");
+                    console.log(data["Desc"]);
+                    console.log(mymedical);
+
+                    var t = document.createElement("label");
+                    t.className = "col-lg-1 col-md-1 col-sm-11 1";
+                    t.style =
+                      "margin:auto;height:fit-content;margin-bottom:3px";
+                    t.innerText = data["Name"];
+                    t.id = "medname" + data["Id"];
+
+                    var d = document.createElement("div");
+                    d.className = "row ";
+                    d.style = "width:90%;margin:auto";
+                    d.id = "meddiv" + data["Id"];
+
+                    var p = document.createElement("p");
+                    p.className = "col-lg-1 col-md-1 col-sm-11 1 ";
+                    p.style =
+                      "margin:auto;height:fit-content;margin-bottom:3px";
+                    p.id = "meddesc" + data["Id"];
+
+                    if (data["Desc"]) {
+                      p.innerText = data["Desc"];
+                    } else {
+                      p.innerText = "No description";
+                    }
+                    var dp = document.getElementById(data["Kind"]);
+                    console.log(dp);
+                    if (dp && ee) {
+                      console.log("appending med nodes");
+                      d.appendChild(t);
+                      d.appendChild(p);
+                      dp.appendChild(d);
+                      console.log("appending med nodes");
+                    } else {
+                      console.log("did not append med nodes");
+                    }
+                  } else if (data["CMD"] === "Update") {
+                    console.log("got update");
+                    //get div and change name nd desc
+                    ////main nodes
+                    var dp = document.getElementById(data["Kind"]);
+
+                    var pd = "meddiv" + data["Id"];
+                    var pe = document.getElementById(pd);
+
+                    if (dp && pe) {
+                      //get name and desc node
+                      console.log("updating med nodes");
+                      var nameid = "medname" + data["Id"];
+                      var decid = "meddesc" + data["Id"];
+
+                      var nam = document.getElementById(nameid);
+                      var dec = document.getElementById(decid);
+
+                      if (nam && dec) {
+                        nam.innerText = data["Name"];
+                        dec.innerText = data["Desc"];
+                        //update med record
+                        enam.value = data["Name"];
+                        edec.value = data["Desc"];
+                      } else {
+                        console.log("did not update med edit nodes");
+                      }
+                    } else {
+                      console.log("did not get main nodes");
+                      console.log(dp);
+                      console.log(pe);
+                    }
+                  } else if (data["CMD"] === "Delete") {
+                    console.log("got medi delete");
+                    var dp = document.getElementById(data["Kind"]);
+
+                    var pd = "meddiv" + data["Id"];
+                    var pe = document.getElementById(pd);
+
+                    if (dp && pe) {
+                      //get name and desc node
+                      dp.removeChild(pe);
+                    } else {
+                      console.log("did not get main nodes");
+                      console.log(pe);
+                      console.log(dp);
+                    }
+                  } else {
+                    console.log("cmd unknown");
+                  }
+                } else if (data["Type"] === "Emergency") {
+                  ///create fields
+                  console.log("got emergency");
+                  //create main div and add data
+                  myemergency.push(data);
+                  var c = data["Type"];
+                  var ediv = document.getElementById(c);
+                  console.log(ediv);
+
+                  if (ediv) {
+                    if (data["Index"] === 1) {
+                      console.log("got index 1");
+                      for (var i = 0; i < data["keys"].length; i++) {
+                        var u = data["keys"];
+                        var f = u[i];
+                        var o = f + "1";
+                        console.log(o);
+                        var y = document.getElementById(o);
+                        var di = document.getElementById("firstemer");
+                        if (y && di) {
+                          console.log(y);
+                          console.log(di);
+                          y.innerText = data[f];
+                        }
+                      }
+                    }
+                    if (data["Index"] === 2) {
+                      console.log("got index 2");
+                      for (var i = 0; i < data["keys"].length; i++) {
+                        var u = data["keys"];
+                        var f = u[i];
+                        var o = f + "2";
+                        var y = document.getElementById(o);
+                        var di = document.getElementById("secondemer");
+                        if (y && di) {
+                          console.log(y);
+                          console.log(di);
+                          y.innerText = data[f];
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  console.log(
+                    "got update data but dont know what to do with it"
+                  );
+                }
+              }
+            });
+          </script>
+          <div
+            class="row mb-1 g-2 p-2"
+            id="Emergency"
+            style="width: 80%; margin: auto; display: none"
+          >
+            <p
+              class="col-lg-11 col-md-11 col-sm-11 col-11 mb-1 g-2 p-2"
+              style="text-align: center"
+            >
+              Emergency
+            </p>
+            <div
+              class="row mb-1 g-2 p-2"
+              id="firstemer"
+              style="width: 100%; margin: auto"
+            >
+              <label
+                for=""
+                class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light"
+                style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                "
+                >Name</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="name1"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Phone Number</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="phone1"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Phone Number</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="contact1"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Role</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="role1"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Member</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="member1"
+                style="margin: auto; height: fit-content"
+              ></label>
+                </div>
+                <div class="row mb-1 g-2 p-2" id="secondemer" style="width: 100%; margin: auto">
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Name</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="name2"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Phone Number</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="phone2"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Phone Number</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="contact2"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Role</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="role2"
+                style="margin: auto; height: fit-content"
+              ></label>
+                    <label for="" class="col-5 col-md-4 col-sm-4 col-lg-4 g-0 p-1 bg-light" style="
+                  margin: auto;
+                  height: fit-content;
+                  margin-bottom: 3px;
+                  overflow: hidden;
+                ">Member</label
+              >
+              <label
+                for=""
+                class="col-7 col-md-8 col-sm-8 col-lg-8 g-0 p-1 bg-light"
+                id="member2"
+                style="margin: auto; height: fit-content"
+              ></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="row g-0 p-0 mt-0 mb-0 ml-0 mr-0" style="
+        width: 100vw;
+        margin: auto;
+        overflow-y: hidden;
+        height: 96vh;
+        top: 0px;
+        position: absolute;
+      ">
+        <img class="border" id="mybtn" style="
+          float: left;
+          height: 25px;
+          width: 40px;
+          display: none;
+          position: absolute;
+          z-index: 4;
+          margin-left: 0%;
+          left: 0%;
+        " src="/static/Images/Icons/back.png" />
+        <div class="row g-0 p-0 mb-0 bg-light border" id="mesgUserid" style="margin: auto; height: 80px; width: 100%; margin-top: 27px">
+            <img class="border m-0" id="mydp" height="70px" style="margin: auto; border-radius: 35px; width: 70px" />
+            <div class="col-9 col-sm-9 col-md-11 col-lg-11 ml-2 mt-0 p-0 g-0" style="width: 100%; margin: auto; float: left">
+                <div class="row m-0 g-0 p-0" style="width: 100%; margin: auto">
+                    <a class="col-12 ml-0 g-0 p-0" style="margin: auto; float: left; width: 100%" id="myname"></a>
+                </div>
+            </div>
+            <label class="border ml-auto mr-0 g-1 p-1" id="myunread" style="
+            position: absolute;
+            width: max-content;
+            height: max-content;
+            right: 10px;
+            border-radius: 5px;
+            font-size: small;
+            display: none;
+          ">0</label
+        >
+      </div>
+      <div
+        class="row mt-0 g-0 p-0 bg-white"
+        style="
+          overflow-y: hidden;
+          margin-bottom: 0px;
+          margin: 0px;
+          height: 83vh;
+          width: 100%;
+          overflow-x: hidden;
+        "
+      >
+        <div
+          class="row g-0 p-0 mt-0 mb-0"
+          onclick="hp()"
+          onscroll="hp()"
+          style="
+            overflow-y: auto;
+            height: 100%;
+            overflow-x: hidden;
+            width: 100%;
+            margin: auto;
+            display: block;
+          "
+          id="mesger"
+        ></div>
+      </div>
+      <script>
+        function showcall(id, type) {
+          var fr = document.getElementById("mframe");
+          console.log(fr);
+          var dv = document.getElementById("mframediv");
+          if (dv && fr) {
+            tframe("hide");
+            v = "http://192.168.43.109:5000/account";
+            fr.src = v;
+            otherv("second");
+            showp();
+            dv.style.display = "block";
+          }
+        }
+      </script>
+    </div>
+    <script>
+      sio.on("managemsg", function (data) {
+        console.log("got data");
+        console.log(data);
+        var id = data["MsgId"];
+        var di = document.getElementById(id);
+        var md = document.getElementById("mesger");
+        console.log(md);
+        if (md && di) {
+          console.log("got all div");
+          md.removeChild(di);
+        }
+      });
+
+      function removemsg(chat) {
+        console.log("got id");
+        console.log(chat["Id"]);
+        console.log(chat);
+        var id = chat["Id"];
+
+        var u = "msg" + id;
+        var d = document.getElementById(u);
+        console.log(d);
+        if (d) {
+          console.log("got mesg div");
+          d.style.display = "none";
+          //sio emit msg id chatid
+
+          var data = {
+            Type: "Delete",
+            ChatId: chat["Chatid"],
+            MsgId: chat["Id"],
+          };
+          chat["Type"] = "Delete";
+
+          console.log(data);
+          sio.emit("managemsg", chat);
+          console.log("emited");
+        }
+        var optid = "opt" + chat["Id"];
+        var optbt = document.getElementById(optid);
+        if (optbt) {
+          console.log(optbt);
+          optbt.style.display = "block";
+        }
+      }
+      var isediting = "false";
+
+      function opt(id) {
+        console.log(id);
+        var u = "menu" + id;
+        var p = document.getElementById(u);
+        console.log(p);
+        if (isediting === "true") {
+          console.log("already editing somewhere else");
+        } else {
+          if (p) {
+            console.log("got message");
+            var t = "menu" + id;
+            var e = document.getElementById(t);
+            console.log(t);
+            console.log(e);
+            if (e) {
+              console.log("got eeeeeeeeeee ");
+
+              if (e.style.display === "flex") {
+                console.log("display flex ");
+                e.style.display = "none";
+              } else if (e.style.display === "flex") {
+                console.log("display none ");
+                e.style.display = "none";
+              } else {
+                console.log("display none ");
+                e.style.display = "flex";
+              }
+            }
+          }
+        }
+      }
+
+      function bbtn() {
+        var fd = document.getElementById("myframe");
+        var f = document.getElementById("myframe");
+        if (f && fd) {
+          f.style.display = "none";
+          fd.style.display = "block";
+          var f = document.getElementById("backbtn");
+          if (f) {
+            f.addEventListener("click", function () {
+              bbtn();
+            });
+          }
+        }
+      }
+    </script>
+    <script>
+      //hide post tag
+      function hp() {
+        document.getElementById("newm").style.display = "none";
+        document.getElementById("getpic").style.display = "none";
+        let y = document.getElementById("newtext");
+        y.style.height = "28px";
+        y.blur();
+        // y.placeholder = "Write post"
+      }
+      // show post tag
+      function sp() {
+        console.log("selected post input");
+        //  console.log(e);
+        document.getElementById("newm").style.display = "block";
+        document.getElementById("getpic").style.display = "block";
+        let y = document.getElementById("newtext");
+        y.style.height = "50px";
+      }
+    </script>
+
+    <form
+      class="row g-0 p-0 mb-1"
+      id="newmsg"
+      style="
+        width: 100vw;
+        height: min-content;
+        border-radius: 5px;
+        margin: auto;
+        position: absolute;
+        bottom: 0px;
+      "
+    >
+      <span class="col-1"></span>
+      <div
+        class="row mx-auto"
+        id="myattatch"
+        style="width: 100%; z-index: 3; height: min-content"
+      ></div>
+
+      <!--
+
+               <input type="file" name="attatch" onchange="gotattatch()" class="col-2" id="attatch">
+
+            -->
+
+      <textarea
+        class="col-12 form-control mb-0"
+        type="textarea"
+        id="newtext"
+        placeholder="write here"
+        oninput="sp()"
+        onfocus="sp()"
+        style="height: 28px; margin: auto; overflow: auto; grid-row: auto"
+      ></textarea>
+      <img
+        class="mr-0 ml-auto"
+        onclick="k()"
+        id="getpic"
+        style="z-index: 4; height: 25px; width: 40px; display: none"
+        src="/static/Images/DP/default.png"
+      />
+      <button
+        class="col-2 btn btn-primary form-control mb-0 mr-0 ml-1"
+        type="button"
+        name="send"
+        value="submit"
+        id="newm"
+        onclick="newE({{Id}})"
+        style="margin-top: auto; float: right; display: none"
+      >
+        send
+      </button>
+    </form>
+    <div
+      class="row border"
+      style="
+        height: 100vh;
+        position: absolute;
+        width: 100%;
+        z-index: 3;
+        margin: auto;
+        overflow: hidden;
+        display: none;
+      "
+    >
+      <div
+        class="col-12 border g-0 p-0 bg-grey"
+        style="width: 100vw; height: 100vh; overflow: hidden"
+      >
+        <img
+          class="img-responsive"
+          src="/static/Images/AlbumCovers/169583.png"
+          style="width: 100%; height: 100vh"
+        />
+      </div>
+      <button
+        class="btn"
+        style="
+          top: 40vh;
+          position: absolute;
+          width: max-content;
+          height: max-content;
+          left: 2px;
+        "
+      >
+        prev
+      </button>
+      <button
+        class="btn"
+        style="
+          top: 40vh;
+          position: absolute;
+          width: max-content;
+          height: max-content;
+          right: 2px;
+        "
+      >
+        next
+      </button>
+      <p
+        class="col-12 border g-0 p-1"
+        style="
+          width: 100%;
+          position: absolute;
+          top: 90vh;
+          max-height: 10vh;
+          overflow-y: auto;
+        "
+      >
+        this is where the fucking text goes mate this is where the fucking text
+        goes mate this is where the fucking text goes mate this is where the
+        fucking text goes mate this is where the fucking text goes mate this is
+        where the fucking text goes mate this is where the fucking text goes
+        mate this is where the fucking text goes mate this is where the fucking
+        text goes mate this is where the fucking text goes mate this is where
+        the fucking text goes mate this is where the fucking text goes mate this
+        is where the fucking text goes mate
+      </p>
+    </div>
+
+    <script type="text/javascript">
+      function maxmedia(id, attf) {
+        console.log(id);
+        var msgd;
+        var msgatt;
+        if (msgdata[id]) {
+          var msgd = msgdata[id];
+          var msgatt = msgd["Att"];
+          console.log(msgd);
+          console.log(msgatt);
+        }
+        var mainbtn = top.document.getElementById("iframebtn");
+        var minibtn = document.getElementById("mybtn");
+
+        mainbtn.style.display = "none";
+        minibtn.style.display = "block";
+
+        minibtn.addEventListener("click", function (e) {
+          console.log("got minimise");
+          mainbtn.style.display = "block";
+          minibtn.style.display = "none";
+
+          minmedia(id);
+        });
+        let mdiv = document.createElement("div");
+        mdiv.className = "row border";
+        mdiv.style =
+          "height: 100vh;position:absolute;width:100%;z-index:3;margin:auto;overflow:hidden;";
+        mdiv.id = "maxmedia" + id;
+
+        let mindiv = document.createElement("div");
+        mindiv.className = "col-12 border g-0 p-0 bg-grey";
+        mindiv.style = "width:100vw;height:100vh;overflow:hidden";
+
+        let mymedia = document.createElement("img");
+        mymedia.className = "img-responsive bg-light";
+        mymedia.style = "width:100%;height:100vh;z-index:4";
+        mymedia.src = "http://127.0.0.1:8000/static/Images/" + attf["Name"];
+        // http: //127.0.0.1:8080/static/Images/97663.png
+        console.log(mymedia);
+
+        let nbtn = document.createElement("button");
+        nbtn.className = "btn bg-white";
+        nbtn.style =
+          "top:40vh;position:absolute;width:max-content;height:max-content;right:2px;display:none;";
+        nbtn.innerText = "next";
+
+        let pbtn = document.createElement("button");
+        pbtn.className = "btn bg-white";
+        pbtn.style =
+          "top:40vh;position:absolute;width:max-content;height:max-content;left:2px;display:none;";
+        pbtn.innerText = "prev";
+
+        let msgtxt = document.createElement("p");
+        msgtxt.className = "col-12 g-0 p-0 bg-white";
+        msgtxt.style =
+          "width:100%;position:absolute;top:90vh;max-height:10vh;overflow-y:auto;text-align:center;display:block;min-height:0px;word-break:break-all;overflow-x:hidden";
+        msgtxt.innerText = msgd["Msg"];
+        if (msgd["Msg"] === "") {
+          console.log("got blank");
+          msgtxt.style.height = "0px";
+        }
+        mdiv.appendChild(mindiv);
+        mindiv.appendChild(mymedia);
+        mdiv.appendChild(nbtn);
+        mdiv.appendChild(pbtn);
+        mdiv.appendChild(msgtxt);
+        let mainbody = document.getElementsByTagName("body")[0];
+        if (mainbody) {
+          console.log("got main body");
+          console.log(mainbody);
+          mainbody.appendChild(mdiv);
+          console.log(mymedia);
+          mdiv.addEventListener("click", function (e) {
+            console.log("click to hide text and control,double to exit");
+            if (msgtxt.style.display == "none") {
+              msgtxt.style.display = "block";
+              if (msgatt.length === 1) {
+                nbtn.style.display = "none";
+                pbtn.style.display = "none";
+              } else {
+                pbtn.style.display = "none";
+                nbtn.style.display = "none";
+              }
+            } else {
+              msgtxt.style.display = "none";
+              pbtn.style.display = "none";
+              nbtn.style.display = "none";
+            }
+          });
+        }
+        if (msgatt.length === 1) {
+          nbtn.style.display = "none";
+          pbtn.style.display = "none";
+        } else {
+        }
+        nbtn.style.display = "none";
+        pbtn.style.display = "none";
+      }
+
+      function minmedia(id) {
+        let idd = "maxmedia" + id;
+        let mmedia = document.getElementById(idd);
+        let mainbody = document.getElementsByTagName("body")[0];
+        if (mmedia && mainbody) {
+          console.log("got max div", mmedia);
+          mmedia.style.display = "none";
+          mainbody.removeChild(mmedia);
+        } else {
+          console.log("unable to get maxed out media div");
+        }
+      }
+    </script>
+  </body>
+</html>
