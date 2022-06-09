@@ -1,2 +1,2 @@
 # Messanger
-Python-flask based web-based mesanger
+Python-flask based web-based messanger
